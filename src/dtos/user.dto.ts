@@ -2,7 +2,7 @@ import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 export class UserDto {
   @IsEmail()
-  @IsNotEmpty()
+  @Length(6, 30)
   email: string;
 
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class UserDto {
   lastName: string;
 
   @IsNotEmpty()
-  @Length(5, 44)
+  @Length(8, 32)
   password: string;
 
   //per validare obj dentro obj si usa @ValidateNested()

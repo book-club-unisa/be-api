@@ -37,7 +37,7 @@ export class Book {
 
   @Column({
     name: 'description',
-    type: 'varchar',
+    type: 'text',
     nullable: false,
   })
   description: string;

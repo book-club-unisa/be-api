@@ -4,33 +4,55 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
+  Headers,
   HttpException,
+  HttpStatus,
   Param,
   Post,
+  Put,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { UserDto } from 'src/dtos/user.dto';
 import { User } from 'src/Entities/User';
-import { UserService } from './user.service';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { UserService, userPermissions } from './user.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller()
+function exitUnauthorized() {
+  throw new HttpException(undefined, HttpStatus.UNAUTHORIZED);
+}
+
+@Controller('users')
 export class UserController {
   constructor(private readonly UserService: UserService) {}
 
-  @Get('/all')
+  @Post('')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UsePipes(ValidationPipe)
+  async createUser(@Body() user: UserDto) {
+    return this.UserService.createUser(user);
+  }
+
+  @Get('')
   @UsePipes(ValidationPipe)
   findAll(): Promise<User[]> {
     return this.UserService.getAllUsers();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @Post('/search')
+  @Post('sign-in')
   @UsePipes(ValidationPipe)
-  findUser(@Body() user: User) {
-    return this.UserService.findUser(user.email, user.password);
+  async signIn(@Body() user: User) {
+    const token = await this.UserService.retrieveTokenByCredentials(
+      user.email,
+      user.password,
+    );
+    if (!token) {
+      throw new HttpException('Wrong credentials', HttpStatus.UNAUTHORIZED);
+    }
+    return token;
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -42,22 +64,30 @@ export class UserController {
     else return result;
   }
 
-  @Post('/update')
+  @Put(':email')
   @UsePipes(ValidationPipe)
-  updateUser(@Body() user: UserDto) {
-    return this.UserService.updateUser(user);
+  async updateUser(
+    @Headers('Authorization') token: string | undefined,
+    @Param('email') email: string,
+    @Body() updateUser: UpdateUserDto,
+  ) {
+    const permissions = await this.UserService.loadPermissionsByToken(token);
+    if (!permissions.includes(userPermissions.updateAccount)) {
+      exitUnauthorized();
+    }
+    return this.UserService.updateUserByEmail(email, updateUser);
   }
 
-  @Post('/create')
-  @UseInterceptors(ClassSerializerInterceptor)
+  @Delete(':email')
   @UsePipes(ValidationPipe)
-  async createUser(@Body() user: UserDto) {
-    return this.UserService.createUser(user);
-  }
-
-  @Delete('/delete/:email')
-  @UsePipes(ValidationPipe)
-  deleteUser(@Param('email') email: string) {
+  async deleteUser(
+    @Headers('Authorization') token: string | undefined,
+    @Param('email') email: string,
+  ) {
+    const permissions = await this.UserService.loadPermissionsByToken(token);
+    if (!permissions.includes(userPermissions.deleteAccount)) {
+      exitUnauthorized();
+    }
     return this.UserService.deleteUser(email);
   }
 }

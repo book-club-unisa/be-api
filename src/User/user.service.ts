@@ -1,16 +1,27 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UseInterceptors,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/dtos/user.dto';
 import { Repository } from 'typeorm';
 import { User } from 'src/Entities/User';
 import { SHA256 } from 'sha2';
+import { UpdateUserDto } from './dto/update-user.dto';
+
+// TODO: Bring User's code inside /src/User folder
+
+export const userPermissions = {
+  updateAccount: 'userPermissions:updateAccount',
+  deleteAccount: 'userPermissions:deleteAccount',
+};
+
+function makeSafe(str: string): string {
+  const shaBuffer = SHA256(str);
+  return shaBuffer.toString('base64');
+}
+
+function generateToken(email: string, password: string) {
+  const separator = '@@@';
+  return Buffer.from(`${email}${separator}${password}`).toString('base64');
+}
 
 @Injectable()
 export class UserService {
@@ -18,8 +29,23 @@ export class UserService {
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
   ) {}
 
+  async createUser(user: UserDto) {
+    const userByEmail = await this.usersRepository.findOne(user.email);
+    if (userByEmail) {
+      throw new HttpException('Email already taken', 409);
+    }
+    const sha2pass = makeSafe(user.password);
+    const userToInsert = this.usersRepository.create({
+      email: user.email,
+      password: sha2pass,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
+    return await this.usersRepository.save(userToInsert);
+  }
+
   getAllUsers(): Promise<User[]> {
-    return this.usersRepository.find(); //SELECT * from user
+    return this.usersRepository.find();
   }
 
   async findUserByEmail(email: string) {
@@ -27,61 +53,56 @@ export class UserService {
       const searchedUser = await this.usersRepository.findOneOrFail(email);
       return new User(searchedUser);
     } catch (err) {
-      return {
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-      };
+      throw new HttpException('User not found', 404);
     }
   }
 
-  async createUser(user: UserDto) {
-    const tmp = this.findUserByEmail(user.email);
-    if ((await tmp).email == '') {
-      const shaBuffer = SHA256(user.password);
-      const sha2pass = shaBuffer.toString('base64');
-      const newUser = this.usersRepository.create({
-        email: user.email,
-        password: sha2pass,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      });
-      const insertedUser = this.usersRepository.save(newUser);
-      return insertedUser;
-    } else throw new HttpException('Email alredy taken', 409);
+  async retrieveTokenByCredentials(
+    email: string,
+    password: string,
+  ): Promise<string | undefined> {
+    const userByEmail = await this.usersRepository.findOne(email);
+    if (userByEmail && userByEmail.password === makeSafe(password)) {
+      return generateToken(email, userByEmail.password);
+    }
+    return undefined;
   }
 
-  async updateUser(user: UserDto): Promise<User> {
-    const updatedUser = await this.usersRepository.save(user);
-    return new User(updatedUser);
-  }
-
-  async findUser(email: string, password: string): Promise<User> {
-    const shaBuffer = SHA256(password);
-    const sha2pass = shaBuffer.toString('base64');
-    try {
-      const userFound = await this.usersRepository.findOneOrFail(email);
-      if (userFound.password == sha2pass) {
-        return userFound;
-      } else
-        throw new HttpException(
-          'Invalid Email or Password',
-          HttpStatus.BAD_REQUEST,
-        );
-    } catch (err) {
-      throw new HttpException(
-        'Invalid Email or Password',
-        HttpStatus.BAD_REQUEST,
-      );
+  async updateUserByEmail(
+    email: string,
+    updateUser: UpdateUserDto,
+  ): Promise<void> {
+    const update = await this.usersRepository.update(email, updateUser);
+    if (update.affected === 0) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
   }
 
   async deleteUser(email: string): Promise<User> {
     const user = await this.findUserByEmail(email);
-    if (user.email == '') throw new HttpException('Invalid Email', 400);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     await this.usersRepository.remove(user);
-    user.password = '';
+    delete user.password;
     return user;
+  }
+
+  async loadPermissionsByToken(token: string | undefined): Promise<string[]> {
+    if (!token) {
+      return [];
+    }
+    const plainData = Buffer.from(token, 'base64').toString();
+    const [email, password] = plainData.split('@@@');
+    const data = await this.usersRepository.find({ email, password });
+    if (data.length) {
+      // const loadedUser = data[0];
+      return [
+        userPermissions.updateAccount,
+        userPermissions.deleteAccount,
+        // ...
+      ];
+    }
+    return [];
   }
 }

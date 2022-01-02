@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BookDto } from 'src/dtos/book.dto';
 import { Book } from 'src/Entities/Book';
 import { Repository } from 'typeorm';
-//import { Query } from '@nestjs-query/core';
 
 @Injectable()
 export class BookService {

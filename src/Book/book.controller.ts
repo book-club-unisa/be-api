@@ -2,12 +2,12 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   HttpException,
   Param,
   Post,
 } from '@nestjs/common';
 import { BookDto } from 'src/dtos/book.dto';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BookService } from './book.service';
 
 @Controller()
