@@ -23,7 +23,6 @@ export class UserController {
   @Get('/all')
   @UsePipes(ValidationPipe)
   findAll(): Promise<User[]> {
-    
     return this.UserService.getAllUsers();
   }
 
