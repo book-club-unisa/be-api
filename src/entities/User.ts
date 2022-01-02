@@ -1,35 +1,39 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn, } from "typeorm";
+import { Exclude } from 'class-transformer';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class User{
+export class User {
+  @PrimaryColumn({
+    type: 'varchar',
+    name: 'email',
+    default: '',
+    nullable: false,
+  })
+  email: string;
 
-    
-    @PrimaryColumn({
-        unique:true,
-        name: 'email',
-        type: 'varchar',
-        nullable: false,
-    })
-    email: string;
+  @Column({
+    type: 'varchar',
+    name: 'firstName',
+    nullable: false,
+  })
+  firstName: string;
 
-    @Column({
-        type: 'varchar',
-        name: 'firstname',
-        nullable: false,
-    })
-    firstname: string;
+  @Column({
+    type: 'varchar',
+    name: 'lastName',
+    nullable: false,
+  })
+  lastName: string;
 
-    @Column({
-        type: 'varchar',
-        name: 'lastname',
-        nullable: false,
-    })
-    lastname: string;
+  @Exclude()
+  @Column({
+    type: 'varchar',
+    name: 'password',
+    nullable: false,
+  })
+  password: string;
 
-    @Column({
-        type: 'varchar',
-        name: 'password',
-        nullable: false,
-    })
-    password: string;
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }

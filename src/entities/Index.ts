@@ -1,10 +1,8 @@
-import { Book } from "./Book";
-import { Bookclub } from "./Bookclub";
-import { Bookclub_membership } from "./Bookclub_membership";
-import { User } from "./User";
+import { Book } from './Book';
+import { User } from '../User/user.entity';
 
-const entities = [User, Book, Bookclub, Bookclub_membership];
+const entities = [User];
 
-export {User, Book, Bookclub, Bookclub_membership};
+export { User, Book };
 
 export default entities;
