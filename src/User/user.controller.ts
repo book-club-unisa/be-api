@@ -15,7 +15,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserDto } from 'src/dtos/user.dto';
-import { User } from 'src/Entities/User';
+import { User } from 'src/entities/User';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserService, userPermissions } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';

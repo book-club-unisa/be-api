@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookDto } from 'src/dtos/book.dto';
-import { Book } from 'src/Entities/Book';
+import { Book } from 'src/entities/Book';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -33,6 +33,12 @@ export class BookService {
     });
 
     return booksFound;
+  }
+
+  async findBookByIsbn(isbn: string) : Promise<Book>{
+    const book = await this.BookRepository.findOne(isbn);
+    if(book) return book;
+    else throw new HttpException('Invalid ISBN', HttpStatus.BAD_REQUEST);
   }
 
   async saveBook(bookDto: BookDto) {

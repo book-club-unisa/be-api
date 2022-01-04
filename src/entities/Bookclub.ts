@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Book } from './Book';
+import { User } from './User';
 
 @Entity()
 export class Bookclub {
@@ -9,23 +11,17 @@ export class Bookclub {
   id: number;
 
   @Column({
-    name: 'bookclub_name',
+    name: 'bookclubName',
     type: 'varchar',
     nullable: false,
   })
-  bookclub_name: string;
+  bookclubName: string;
 
-  @Column({
-    name: 'book_isbn',
-    type: 'varchar',
-    nullable: false,
-  })
-  book_isbn: string;
+  
+  @ManyToOne(() => Book, book => book.isbn)
+  book: string;
 
-  @Column({
-    name: 'founder_email',
-    type: 'varchar',
-    nullable: false,
-  })
-  founder_email: string;
+  
+  @ManyToOne(()=> User, user => user.email)
+  founder: string;
 }

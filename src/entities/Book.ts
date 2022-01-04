@@ -7,6 +7,7 @@ export class Book {
     type: 'varchar',
   })
   isbn: string;
+  
 
   @Column({
     name: 'title',
@@ -22,7 +23,7 @@ export class Book {
   author: string;
 
   @Column({
-    name: 'pages_count',
+    name: 'pagesCount',
     type: 'int',
     nullable: false,
   })
@@ -43,7 +44,7 @@ export class Book {
   description: string;
 
   @Column({
-    name: 'cover_url',
+    name: 'coverUrl',
     type: 'varchar',
     nullable: false,
   })

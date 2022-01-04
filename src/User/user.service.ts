@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/dtos/user.dto';
 import { Repository } from 'typeorm';
-import { User } from 'src/Entities/User';
+import { User } from 'src/entities/User';
 import { SHA256 } from 'sha2';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -46,6 +46,12 @@ export class UserService {
 
   getAllUsers(): Promise<User[]> {
     return this.usersRepository.find();
+  }
+
+  async findUser(email: string, password: string): Promise<string>{
+    const data = await this.usersRepository.find({ email, password });
+    if(data.length) return 'FOUND';
+    else 'NOT FOUND';
   }
 
   async findUserByEmail(email: string) {
@@ -105,4 +111,5 @@ export class UserService {
     }
     return [];
   }
+ 
 }
