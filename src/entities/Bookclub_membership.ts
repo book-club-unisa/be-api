@@ -1,18 +1,27 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from 'typeorm';
+import { ForeignKeyMetadata } from 'typeorm/metadata/ForeignKeyMetadata';
+import { Bookclub } from './Bookclub';
+import { User } from './User';
 
 @Entity()
 export class Bookclub_membership {
-  @PrimaryColumn({
-    name: 'bookclub_id',
-    type: 'int',
-  })
-  bookclubId: number;
-
+  @ManyToOne(() => Bookclub, Bookclub=> Bookclub.id)
   @Column({
-    name: 'user_email',
-    type: 'varchar',
+    name : 'bookclubId',
+    type : 'int'
   })
-  userEmail: string;
+  bookclub: number;
 
-  // TODO: Foreign keys
+  @ManyToOne(()=> User, User => User.email)
+  @Column({
+    name : 'userEmail',
+    type : 'varchar'
+  })
+  user: string;
+
+  @PrimaryGeneratedColumn({
+    name : 'membershipId'
+  })
+  @PrimaryColumn()
+  membershipId : number
 }

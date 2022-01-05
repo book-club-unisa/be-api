@@ -15,10 +15,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserDto } from 'src/dtos/user.dto';
-import { User } from 'src/entities/User';
+import { User } from 'src/Entities/User';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserService, userPermissions } from './user.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from 'src/dtos/update-user.dto';
 
 function exitUnauthorized() {
   throw new HttpException(undefined, HttpStatus.UNAUTHORIZED);
@@ -32,6 +32,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(ValidationPipe)
   async createUser(@Body() user: UserDto) {
+    console.log(user);
     return this.UserService.createUser(user);
   }
 

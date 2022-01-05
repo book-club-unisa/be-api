@@ -1,24 +1,34 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Bookclub } from './Bookclub';
+import { User } from './User';
 
 @Entity()
 export class Bookclub_user_invite {
-  @Column({
-    name: 'bookclub_id',
-    type: 'int',
-    nullable: false,
+  
+  @PrimaryGeneratedColumn({
+    name: 'inviteId',
   })
-  bookclub_id: number;
+  @PrimaryColumn()
+  inviteId : number;
 
+  @ManyToOne(()=> Bookclub, Bookclub=>Bookclub.id)
   @Column({
-    name: 'user_email',
-    type: 'varchar',
-    nullable: false,
+    name : 'bookclubId',
+    type : 'int'
   })
-  user_email: string;
+  bookclub: number;
+
+ @ManyToOne(()=> User, user=>user.email)
+ @Column({
+  name: 'userEmail',
+  type: 'varchar',
+  nullable: false,
+  })
+  user: string;
 
   @Column({
     name: 'state',
-    type: 'enum',
+    type: 'varchar',
     nullable: false,
   })
   State: string;

@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDto } from 'src/dtos/user.dto';
 import { Repository } from 'typeorm';
-import { User } from 'src/entities/User';
+import { User } from 'src/Entities/User';
 import { SHA256 } from 'sha2';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from 'src/dtos/update-user.dto';
 
 // TODO: Bring User's code inside /src/User folder
 
@@ -48,9 +48,9 @@ export class UserService {
     return this.usersRepository.find();
   }
 
-  async findUser(email: string, password: string): Promise<string>{
+  async findUser(email: string, password: string): Promise<string> {
     const data = await this.usersRepository.find({ email, password });
-    if(data.length) return 'FOUND';
+    if (data.length) return 'FOUND';
     else 'NOT FOUND';
   }
 
@@ -63,21 +63,16 @@ export class UserService {
     }
   }
 
-  async retrieveTokenByCredentials(
-    email: string,
-    password: string,
-  ): Promise<string | undefined> {
+  async retrieveTokenByCredentials(email: string,password: string): Promise<string | undefined> {
     const userByEmail = await this.usersRepository.findOne(email);
-    if (userByEmail && userByEmail.password === makeSafe(password)) {
+    const safePass= makeSafe(password);
+    if (userByEmail && userByEmail.password == safePass) {
       return generateToken(email, userByEmail.password);
     }
     return undefined;
   }
 
-  async updateUserByEmail(
-    email: string,
-    updateUser: UpdateUserDto,
-  ): Promise<void> {
+  async updateUserByEmail(email: string, updateUser: UpdateUserDto): Promise<void> {
     const update = await this.usersRepository.update(email, updateUser);
     if (update.affected === 0) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -111,5 +106,4 @@ export class UserService {
     }
     return [];
   }
- 
 }
