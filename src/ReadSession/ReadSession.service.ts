@@ -10,7 +10,7 @@ export class ReadSessionService {
     @InjectRepository(ReadSession) private readonly ReadSessionRepository : Repository<ReadSession>
     @InjectRepository(PDL) private readonly PDLRepository : Repository<PDL>
 
-    async getPages(id : number){
+    async getPages(id : number) : Promise<number>{
         let pages = 0;
         const readSession = await this.ReadSessionRepository.findOne({id});
         if(!readSession) return pages;

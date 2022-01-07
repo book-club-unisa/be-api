@@ -44,7 +44,7 @@ import { ReadSessionService } from './ReadSession/ReadSession.service';
         ReadSession,
         PDL
       ],
-      synchronize: true,
+      synchronize: false,
     }),
     TypeOrmModule.forFeature([Bookclub]),
     TypeOrmModule.forFeature([User]),

@@ -25,16 +25,15 @@ export class PdlService {
         const bookIsbn  = tmp.book;
         const book = tmp.book;
         const booktmp = await this.BookRepository.findOne(bookIsbn);
-        const bookPages = booktmp.pagesCount;
+        const bookPages : number = booktmp.pagesCount;
 
         
         const State = 'ACTIVE';
         const activeSession = await this.ReadSessionRepository.findOne({user,book,State});
+        if(!activeSession) throw new HttpException('',HttpStatus.BAD_REQUEST);
         const sessionId = activeSession.id;
-        const oldPDLs = await this.ReadSessionService.getPages(sessionId);
-        console.log('OLD PAGES ' + oldPDLs);
+        const oldPDLs : number = await this.ReadSessionService.getPages(sessionId);
 
-        
         if(newPDL + oldPDLs>bookPages){
             newPDL = bookPages - oldPDLs;
             const PDL = this.PDLRepository.create({

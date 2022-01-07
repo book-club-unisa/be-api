@@ -1,7 +1,8 @@
-import { Controller, Headers, HttpException, HttpStatus, Inject, Param, Post } from '@nestjs/common';
+import { Body, Controller, Headers, HttpException, HttpStatus, Inject, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
 import { MembershipService } from 'src/Membership/membership.service';
 import { UserService } from 'src/User/user.service';
+import { AddPDL } from './AddPDL';
 import { PdlService } from './PDL.service';
 
 @Controller('')
@@ -24,17 +25,17 @@ export class PdlController {
     else return 'UNAUTHORIZED';
   }
 
-  @Post('bookclub/:id/addPDL/:pages')
+  @Post('bookclub/:id/addPDL')
+  @UsePipes(ValidationPipe)
   async addPDL(
       @Param('id') bookclub : number,
       @Headers('Authorization') token : string|undefined,
-      @Param('pages') pages : string
+      @Body() pages : AddPDL 
   ){
     const result = await this.loadPermissionsByToken(token,bookclub);
     if(result == 'UNAUTHORIZED') throw new HttpException('CANNOT ADD PDL OF A BOOKCLUB YOU ARE NOT A MEMBER OF', HttpStatus.UNAUTHORIZED);
-    const newPDL = parseInt(pages,10);
-    if(!newPDL || newPDL<0) throw new HttpException('INVALID PDL', HttpStatus.BAD_REQUEST);
+    const newPDL : number = parseInt(pages.numPages,10);
+    if(newPDL == NaN || newPDL<=0) throw new HttpException('INVALID PDL', HttpStatus.BAD_REQUEST);
     return this.PDLService.addPDL(newPDL,result, bookclub);
   }
-
 }
