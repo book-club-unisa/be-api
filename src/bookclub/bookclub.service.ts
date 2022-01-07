@@ -10,7 +10,8 @@ export class BookclubService {
     @InjectRepository(Bookclub)
     private readonly BookclubRepository: Repository<Bookclub>,
   ) {}
-    @Inject(MembershipService) private readonly MembershipService : MembershipService
+  @Inject(MembershipService)
+  private readonly MembershipService: MembershipService;
 
   async createBookclub(isbn: string, bookclubName: string, founder: string) {
     const check = await this.BookclubRepository.find({ bookclubName, founder });
@@ -30,25 +31,27 @@ export class BookclubService {
     }
   }
 
-  async addFounder(bookclubId : number , founder : string){
-    this.MembershipService.addMember(bookclubId,founder);
+  async addFounder(bookclubId: number, founder: string) {
+    this.MembershipService.addMember(bookclubId, founder);
   }
 
-  async validateFounder(founder : string, id : number) : Promise<String>{
-    const check = await this.BookclubRepository.findOne({founder, id});
-    if(check) return 'FOUND';
-    else throw new HttpException('NOT AUTHORIZED',HttpStatus.UNAUTHORIZED)
+  async validateFounder(founder: string, id: number): Promise<string> {
+    const check = await this.BookclubRepository.findOne({ founder, id });
+    if (check) return 'FOUND';
+    else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  async findBookclub(id : number){
+  async findBookclub(id: number) {
     const check = await this.BookclubRepository.findOne(id);
-    if(!check) throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
+    if (!check)
+      throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
     else return check;
   }
 
-  async deleteBookclub(bookclubName: string, founder : string) {
-    const check = await this.BookclubRepository.find({founder, bookclubName });
-    if (!check.length) throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
+  async deleteBookclub(bookclubName: string, founder: string) {
+    const check = await this.BookclubRepository.find({ founder, bookclubName });
+    if (!check.length)
+      throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
     else {
       const found = check.find((bc) => (bc.bookclubName = bookclubName));
       if (found) {

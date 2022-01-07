@@ -1,22 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Book } from 'src/Entities/Book';
+import { Bookclub } from 'src/Entities/Bookclub';
 import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
+import { ReadSession } from 'src/Entities/ReadSession';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class MembershipService {
+  constructor(
+    @InjectRepository(Bookclub_membership)
+    private readonly MembershipRepository: Repository<Bookclub_membership>,
+  ) {}
+  @InjectRepository(ReadSession) private readonly ReadSessionRepository : Repository<ReadSession>
+  @InjectRepository(Bookclub) private readonly BookclubRepository : Repository<Bookclub>
 
-    constructor(@InjectRepository(Bookclub_membership) private readonly MembershipRepository : Repository<Bookclub_membership>) {}
+  async findMember(bookclub: number, user: string) {
+    const member =  await this.MembershipRepository.find({ bookclub, user });
+    if(!member) throw new HttpException('CANNOT ADD A PDL OF A BOOKCLUB YOU ARE NOT A PART OF',HttpStatus.UNAUTHORIZED);
+    return member
+  }
 
-    async findMember(bookclub: number,user : string){
-        return await this.MembershipRepository.find({bookclub,user});
+  async addMember(bookclubId: number, user: string) {
+    const memberShip = this.MembershipRepository.create({
+      bookclub: bookclubId,
+      user: user,
+      State : 'NOT COMPLETED'
+    });
+
+    const id = bookclubId;
+    const bookclub = await this.BookclubRepository.findOne({id});
+    const book = bookclub.book;
+    const State = 'ACTIVE';
+    const readSession = await this.ReadSessionRepository.findOne({user,book,State});
+    if(!readSession){
+      const newSession = this.ReadSessionRepository.create({
+        book : book,
+        user : user,
+        State : 'ACTIVE'
+      });
+      await this.ReadSessionRepository.save(newSession);
     }
 
-    async addMember(bookclubId : number, user : string){
-        const memberShip = this.MembershipRepository.create({
-            bookclub : bookclubId,
-            user : user
-        });
-        await this.MembershipRepository.save(memberShip);
-    }
+    await this.MembershipRepository.save(memberShip);
+  }
 }

@@ -63,16 +63,22 @@ export class UserService {
     }
   }
 
-  async retrieveTokenByCredentials(email: string,password: string): Promise<string | undefined> {
+  async retrieveTokenByCredentials(
+    email: string,
+    password: string,
+  ): Promise<string | undefined> {
     const userByEmail = await this.usersRepository.findOne(email);
-    const safePass= makeSafe(password);
+    const safePass = makeSafe(password);
     if (userByEmail && userByEmail.password == safePass) {
       return generateToken(email, userByEmail.password);
     }
     return undefined;
   }
 
-  async updateUserByEmail(email: string, updateUser: UpdateUserDto): Promise<void> {
+  async updateUserByEmail(
+    email: string,
+    updateUser: UpdateUserDto,
+  ): Promise<void> {
     const update = await this.usersRepository.update(email, updateUser);
     if (update.affected === 0) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

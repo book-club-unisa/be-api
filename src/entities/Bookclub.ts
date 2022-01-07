@@ -12,7 +12,7 @@ import { User } from './User';
 export class Bookclub {
   @PrimaryGeneratedColumn({
     name: 'id',
-    type: 'int'
+    type: 'int',
   })
   @PrimaryColumn()
   id: number;

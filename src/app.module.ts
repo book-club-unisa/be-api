@@ -18,6 +18,13 @@ import { InviteService } from './Invite/invite.service';
 import { MembershipModule } from './Membership/membership.module';
 import { Bookclub_membership } from './Entities/Bookclub_membership';
 import { MembershipService } from './Membership/membership.service';
+import { ReadSessionModule } from './ReadSession/ReadSession.module';
+import { ReadSession } from './Entities/ReadSession';
+import { PdlModule } from './PDL/PDL.module';
+import { PDL } from './Entities/PDL';
+import { PdlController } from './PDL/PDL.controller';
+import { PdlService } from './PDL/PDL.service';
+import { ReadSessionService } from './ReadSession/ReadSession.service';
 
 @Module({
   imports: [
@@ -28,19 +35,46 @@ import { MembershipService } from './Membership/membership.service';
       username: 'root',
       password: 'root',
       database: 'BC',
-      entities: [Bookclub, User, Book, Bookclub_user_invite, Bookclub_membership],
-      synchronize: false,
+      entities: [
+        Bookclub,
+        User,
+        Book,
+        Bookclub_user_invite,
+        Bookclub_membership,
+        ReadSession,
+        PDL
+      ],
+      synchronize: true,
     }),
     TypeOrmModule.forFeature([Bookclub]),
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Book]),
     TypeOrmModule.forFeature([Bookclub_user_invite]),
     TypeOrmModule.forFeature([Bookclub_membership]),
+    TypeOrmModule.forFeature([ReadSession]),
+    TypeOrmModule.forFeature([PDL]),
     BookclubModule,
     InviteModule,
     MembershipModule,
+    ReadSessionModule,
+    PdlModule,
   ],
-  controllers: [UserController, BookController, BookclubController,InviteController],
-  providers: [UserService, Repository, BookService, BookclubService,InviteService,MembershipService],
+  controllers: [
+    UserController,
+    BookController,
+    BookclubController,
+    InviteController,
+    PdlController
+  ],
+  providers: [
+    UserService,
+    Repository,
+    BookService,
+    BookclubService,
+    InviteService,
+    MembershipService,
+    PdlService,
+    ReadSessionService
+  ],
 })
 export class AppModule {}
