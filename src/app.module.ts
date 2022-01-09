@@ -25,6 +25,10 @@ import { PDL } from './Entities/PDL';
 import { PdlController } from './PDL/PDL.controller';
 import { PdlService } from './PDL/PDL.service';
 import { ReadSessionService } from './ReadSession/ReadSession.service';
+import { OdlModule } from './ODL/odl.module';
+import { ODL } from './Entities/ODL';
+import { OdlController } from './ODL/odl.controller';
+import { OdlService } from './ODL/odl.service';
 
 @Module({
   imports: [
@@ -42,7 +46,8 @@ import { ReadSessionService } from './ReadSession/ReadSession.service';
         Bookclub_user_invite,
         Bookclub_membership,
         ReadSession,
-        PDL
+        PDL,
+        ODL
       ],
       synchronize: false,
     }),
@@ -53,18 +58,21 @@ import { ReadSessionService } from './ReadSession/ReadSession.service';
     TypeOrmModule.forFeature([Bookclub_membership]),
     TypeOrmModule.forFeature([ReadSession]),
     TypeOrmModule.forFeature([PDL]),
+    TypeOrmModule.forFeature([ODL]),
     BookclubModule,
     InviteModule,
     MembershipModule,
     ReadSessionModule,
     PdlModule,
+    OdlModule,
   ],
   controllers: [
     UserController,
     BookController,
     BookclubController,
     InviteController,
-    PdlController
+    PdlController,
+    OdlController
   ],
   providers: [
     UserService,
@@ -74,7 +82,8 @@ import { ReadSessionService } from './ReadSession/ReadSession.service';
     InviteService,
     MembershipService,
     PdlService,
-    ReadSessionService
+    ReadSessionService,
+    OdlService
   ],
 })
 export class AppModule {}

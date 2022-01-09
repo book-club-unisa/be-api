@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
+import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
 import { MembershipService } from 'src/Membership/membership.service';
 import { Repository } from 'typeorm';
 
@@ -10,10 +12,13 @@ export class BookclubService {
     @InjectRepository(Bookclub)
     private readonly BookclubRepository: Repository<Bookclub>,
   ) {}
-  @Inject(MembershipService)
-  private readonly MembershipService: MembershipService;
+  @Inject(MembershipService) private readonly MembershipService: MembershipService;
+  @InjectRepository(Book) private readonly BookRepository : Repository<Book>
+  @InjectRepository(Bookclub_membership) private readonly MembershipRepository : Repository<Bookclub_membership>
 
   async createBookclub(isbn: string, bookclubName: string, founder: string) {
+    const book = await this.BookRepository.find({isbn});
+    if(!book.length) throw new HttpException('',HttpStatus.BAD_REQUEST);
     const check = await this.BookclubRepository.find({ bookclubName, founder });
     if (check.length)
       throw new HttpException(
@@ -48,17 +53,22 @@ export class BookclubService {
     else return check;
   }
 
-  async deleteBookclub(bookclubName: string, founder: string) {
-    const check = await this.BookclubRepository.find({ founder, bookclubName });
-    if (!check.length)
-      throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
-    else {
-      const found = check.find((bc) => (bc.bookclubName = bookclubName));
-      if (found) {
-        this.BookclubRepository.delete(found);
-        return 'BOOKCLUB DELETED';
-      } else
-        throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
-    }
+  async findBookclubs(user : string) :Promise<Bookclub[]>{
+    let Bookclubs : Bookclub[];
+    const members = await this.MembershipRepository.find({user});
+    if(!members.length) throw new HttpException('',HttpStatus.BAD_REQUEST);
+    members.forEach(async (member) =>{
+        const id = member.bookclub;
+        const bookclub = await this.BookclubRepository.findOne({id});
+        Bookclubs.push(bookclub);
+    })
+    return Bookclubs;
+  }
+
+  async deleteBookclub(id : number, founder: string) {
+    const check = await this.BookclubRepository.findOne({founder,id});
+    if (!check) throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
+    this.BookclubRepository.delete(check);
+    return 'BOOKCLUB DELETED';
   }
 }

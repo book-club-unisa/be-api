@@ -7,6 +7,8 @@ import {
   HttpStatus,
   Inject,
   Param,
+  Post,
+  Put,
 } from '@nestjs/common';
 import { BookclubService } from 'src/Bookclub/bookclub.service';
 import { UserService } from 'src/User/user.service';
@@ -47,7 +49,7 @@ export class InviteController {
     else return 'UNAUTHORIZED';
   }
 
-  @Get('bookclub/:id/inviteUser/:email')
+  @Post('bookclubs/:id/invite-user/:email')
   async inviteUser(
     @Param('id') bookclubId: number,
     @Param('email') userEmail: string,
@@ -59,19 +61,19 @@ export class InviteController {
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Delete('bookclub/:id/deleteInvite/:inviteId')
+  @Delete('bookclubs/:id/delete-invite/:userEmail')
   async deleteInvite(
     @Param('id') bookclubId: number,
-    @Param('inviteId') inviteId: number,
+    @Param('userEmail') userEmail: string,
     @Headers('Authorization') token: string | undefined,
   ) {
     const result = await this.loadPermissionsByTokenFounder(token, bookclubId);
     if (result == 'AUTHORIZED')
-      return this.InviteService.deleteInvite(inviteId, bookclubId);
+      return this.InviteService.deleteInvite(userEmail, bookclubId);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Get('invite/getInvites/accept/:inviteId')
+  @Put('invite/getInvites/accept/:inviteId')
   async acceptInvite(
     @Param('inviteId') inviteId: number,
     @Headers('Authorization') token: string | undefined,

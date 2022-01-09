@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   Delete,
+  Get,
   Headers,
   HttpException,
   HttpStatus,
@@ -10,8 +12,9 @@ import {
 } from '@nestjs/common';
 import { BookclubService } from './bookclub.service';
 import { UserService } from 'src/User/user.service';
+import { AddBookclub } from './AddBookclub';
 
-@Controller('bookclub')
+@Controller('bookclubs')
 export class BookclubController {
   constructor(private readonly BookclubService: BookclubService) {}
   @Inject(UserService) private readonly UserService: UserService;
@@ -27,17 +30,29 @@ export class BookclubController {
     else return 'UNAUTHORIZED';
   }
 
-  @Post('/:isbn/createBookclub/:name')
+
+  async loadPermissionsByTokenFounder(token: string | undefined,bookclubId: number): Promise<string> {
+    if (!token) {
+      return 'UNAUTHORIZED';
+    }
+    const plainData = Buffer.from(token, 'base64').toString();
+    const [email, password] = plainData.split('@@@');
+    if ((await this.UserService.findUser(email, password)) == 'FOUND'){
+      if((await this.BookclubService.validateFounder(email, bookclubId)) =='FOUND')
+        return 'AUTHORIZED';
+    } else return 'UNAUTHORIZED';
+  }
+
+  @Post('/create')
   async createBookclub(
-    @Param('isbn') isbn: string,
     @Headers('Authorization') token: string | undefined,
-    @Param('name') bookclubName: string,
+    @Body() bookclub : AddBookclub,
   ) {
     const result = await this.loadPermissionsByToken(token);
     if (result != 'UNAUTHORIZED') {
       const BC = await this.BookclubService.createBookclub(
-        isbn,
-        bookclubName,
+        bookclub.isbn,
+        bookclub.name,
         result,
       );
       this.BookclubService.addFounder(BC.id, result);
@@ -45,14 +60,23 @@ export class BookclubController {
     } else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Delete('/deleteBookclub/:name')
+  @Delete('/deleteBookclub/:id')
   async deleteBookclub(
-    @Param('name') bookclubName: string,
+    @Param('id') bookclubId: number,
     @Headers('Authorization') token: string | undefined,
   ) {
+    const result = await this.loadPermissionsByTokenFounder(token,bookclubId);
+    if (result != 'UNAUTHORIZED')
+      return this.BookclubService.deleteBookclub(bookclubId, result);
+    else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  }
+
+  @Get('/member')
+  async findBookclubs(
+    @Headers('Authorization') token: string | undefined,){
     const result = await this.loadPermissionsByToken(token);
     if (result != 'UNAUTHORIZED')
-      return this.BookclubService.deleteBookclub(bookclubName, result);
+      return this.BookclubService.findBookclubs(result);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 }

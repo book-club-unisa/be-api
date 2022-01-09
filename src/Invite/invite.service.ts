@@ -24,12 +24,12 @@ export class InviteService {
     if (check.length)
       throw new HttpException(
         'CANNOT INVITE A MEMBER OF YOUR OWN BOOKCLUB',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
       );
     else if (check2.length)
       throw new HttpException(
         'CANNOT INVITE A USER THAT HAS NOT REPLIED YET',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
       );
     else {
       const newInvite = this.InviteRepository.create({
@@ -66,8 +66,8 @@ export class InviteService {
     else throw new HttpException('NOT FOUND', HttpStatus.NOT_FOUND);
   }
 
-  async deleteInvite(inviteId: number, bookclub: number) {
-    const check = await this.InviteRepository.findOne({ inviteId, bookclub });
+  async deleteInvite(user: string, bookclub: number) {
+    const check = await this.InviteRepository.findOne({ user, bookclub });
     if (check && check.State == 'PENDING')
       return this.InviteRepository.delete(check);
     else
