@@ -22,7 +22,7 @@ export class OdlController {
     } else return 'UNAUTHORIZED';
   }
 
-    @Post('bookclubs/:id/last-read-goal')
+    @Post('bookclubs/:id/update-last-read-goal')
     async updateLastReadGoal(
         @Param('id') bookclubId : number,
         @Headers('Authorization') token : string|undefined,

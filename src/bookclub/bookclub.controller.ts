@@ -13,11 +13,13 @@ import {
 import { BookclubService } from './bookclub.service';
 import { UserService } from 'src/User/user.service';
 import { AddBookclub } from './AddBookclub';
+import { MembershipService } from 'src/Membership/membership.service';
 
 @Controller('bookclubs')
 export class BookclubController {
   constructor(private readonly BookclubService: BookclubService) {}
   @Inject(UserService) private readonly UserService: UserService;
+  @Inject(MembershipService) private readonly MembershipService : MembershipService
 
   async loadPermissionsByToken(token: string | undefined): Promise<string> {
     if (!token) {
@@ -78,5 +80,16 @@ export class BookclubController {
     if (result != 'UNAUTHORIZED')
       return this.BookclubService.findBookclubs(result);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  }
+
+  @Get('/enter/:id')
+  async enterBookclub(
+    @Param('id') bookclub : number,
+    @Headers('Authorization') token : string|undefined
+  ){
+    const result = await this.loadPermissionsByToken(token);
+    if(result == 'UNAUTHORIZED') throw new HttpException('',HttpStatus.UNAUTHORIZED);
+    this.MembershipService.findMember(bookclub,result);
+    return this.BookclubService.enterBookclub(result,bookclub);
   }
 }

@@ -41,6 +41,16 @@ export class InviteService {
     }
   }
 
+
+  async getInvites(user : string) : Promise <Bookclub_user_invite[]>{
+    const invites = await this.InviteRepository.find({user});
+    return invites
+  }
+
+  async seeInvites(bookclub : number){
+    return await this.InviteRepository.find({bookclub});
+  }
+
   async acceptInvite(inviteId: number, user: string) {
     const invite = await this.InviteRepository.findOne({ inviteId, user });
     if (!invite) throw new HttpException('NOT FOUND', HttpStatus.NOT_FOUND);

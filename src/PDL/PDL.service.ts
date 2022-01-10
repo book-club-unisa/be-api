@@ -65,4 +65,31 @@ export class PdlService {
         });
         return await this.PDLRepository.save(PDL);
     }
+
+    async getPercentage(user : string, bookclub : number) : Promise<number>{
+        const member = await this.MembershipRepository.findOne({user,bookclub});
+        if(member.State == 'COMPLETED') return 100;
+        else{
+            const State = 'ACTIVE';
+            const Bookclub = await this.BookclubRepository.findOne(bookclub);
+            const book = Bookclub.book;
+            const Book = await this.BookRepository.findOne(book);
+            const activeSession = await this.ReadSessionRepository.findOne({user,book,State});
+            const readPages = await this.ReadSessionService.getPages(activeSession.id);
+            const percentage = (readPages*100)/Book.pagesCount;
+            return percentage;
+        }
+    }
+
+
+    async getReadSessions(user : string){
+        const sessions = await this.ReadSessionRepository.find({user});
+        return sessions;
+    }
+
+    async getPDLs(id : number, user : string){
+        const session = await this.ReadSessionRepository.find({id,user});
+        if(!session) throw new HttpException('', HttpStatus.UNAUTHORIZED);
+        return await this.PDLRepository.find({id})
+    }
 }

@@ -32,7 +32,6 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(ValidationPipe)
   async createUser(@Body() user: UserDto) {
-    console.log(user);
     return this.UserService.createUser(user);
   }
 

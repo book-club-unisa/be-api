@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BookDto } from 'src/dtos/book.dto';
 import { Book } from 'src/Entities/Book';
 import { Repository } from 'typeorm';
+import {paginate,Pagination,IPaginationOptions} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class BookService {
@@ -35,5 +36,12 @@ export class BookService {
 
   async saveBook(bookDto: BookDto) {
     return await this.BookRepository.save(bookDto);
+  }
+
+
+  async paginate(options: IPaginationOptions): Promise<Pagination<Book>>{
+    const queryBuilder = this.BookRepository.createQueryBuilder('book');
+    queryBuilder.orderBy('book.author', 'ASC');
+    return paginate<Book>(queryBuilder,options);
   }
 }

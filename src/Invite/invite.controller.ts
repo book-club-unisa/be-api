@@ -94,4 +94,25 @@ export class InviteController {
       return this.InviteService.refuseInvite(inviteId, result);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
+
+  @Get('invites/getInvites')
+  async getInvites(
+    @Headers('Authorization') token : string|undefined
+  ){
+    const result = await this.loadPermissionsByTokenUser(token);
+    if (result != 'UNAUTHORIZED')
+      return this.InviteService.getInvites(result);
+    else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  }
+
+  @Get('bookclubs/:id/seeInvites')
+  async seeInvites(
+    @Param('id') id : number,
+    @Headers('Authorization') token : string|undefined
+  ){
+    const result = await this.loadPermissionsByTokenFounder(token, id);
+    if (result == 'AUTHORIZED')
+      return this.InviteService.seeInvites(id);
+    else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
+  }
 }

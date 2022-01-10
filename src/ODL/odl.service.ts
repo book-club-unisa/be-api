@@ -32,7 +32,7 @@ export class OdlService {
         return lastODL;
     }
 
-    async updateLastReadGoal(bookclub : number,milestone : number){
+    async updateLastReadGoal(milestone : number, bookclub : number,){
         const tmp = await this.BookclubRepository.findOne(bookclub);
         const tmp2 = await this.BookRepository.findOne(tmp.book);
         const maxPages = tmp2.pagesCount;
@@ -67,5 +67,25 @@ export class OdlService {
             pages : milestone,
         })
         return await this.ODLRepository.save(newODL);
+    }
+
+    async checkODLStatus(bookclub : number) : Promise <Bookclub_membership[]>{
+        const Bookclub = await this.BookclubRepository.findOne(bookclub);
+        const book = Bookclub.book;
+        const Members = await this.MembershipRepository.find({bookclub});
+        const lastODL = await this.getLastODL(bookclub);
+        if(!lastODL) return Members;
+        const State = 'ACTIVE';
+        const readyMembers : Bookclub_membership[] = [];
+        Members.forEach(async (Member) =>{
+            if(Member.State != 'COMPLETED'){
+                const user = Member.user;
+                const activeSession = await this.ReadSessionRepository.findOne({user,book,State});
+                const pages = await this.ReadSessionService.getPages(activeSession.id);
+                if(pages > lastODL.pages)  readyMembers.push(Member);
+            }else readyMembers.push(Member);
+        })
+
+        return readyMembers;
     }
 }

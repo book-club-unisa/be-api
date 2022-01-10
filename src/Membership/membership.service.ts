@@ -17,7 +17,7 @@ export class MembershipService {
 
   async findMember(bookclub: number, user: string) {
     const member =  await this.MembershipRepository.find({ bookclub, user });
-    if(!member) throw new HttpException('CANNOT ADD A PDL OF A BOOKCLUB YOU ARE NOT A PART OF',HttpStatus.UNAUTHORIZED);
+    if(!member) throw new HttpException('',HttpStatus.UNAUTHORIZED);
     return member
   }
 

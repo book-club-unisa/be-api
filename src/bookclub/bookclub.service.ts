@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
 import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
+import { Bookclub_user_invite } from 'src/Entities/Bookclub_user_invite';
 import { MembershipService } from 'src/Membership/membership.service';
+import { OdlService } from 'src/ODL/odl.service';
+import { PdlService } from 'src/PDL/PDL.service';
 import { Repository } from 'typeorm';
+import { BoockclubInfo } from './BookclubInfo';
 
 @Injectable()
 export class BookclubService {
@@ -15,6 +19,8 @@ export class BookclubService {
   @Inject(MembershipService) private readonly MembershipService: MembershipService;
   @InjectRepository(Book) private readonly BookRepository : Repository<Book>
   @InjectRepository(Bookclub_membership) private readonly MembershipRepository : Repository<Bookclub_membership>
+  @Inject(OdlService) private readonly ODLService : OdlService
+  @Inject(PdlService) private readonly PDLService : PdlService
 
   async createBookclub(isbn: string, bookclubName: string, founder: string) {
     const book = await this.BookRepository.find({isbn});
@@ -70,5 +76,29 @@ export class BookclubService {
     if (!check) throw new HttpException('BOOKCLUB NOT FOUND', HttpStatus.NOT_FOUND);
     this.BookclubRepository.delete(check);
     return 'BOOKCLUB DELETED';
+  }
+
+  async enterBookclub(user : string, bookclub : number) : Promise <BoockclubInfo>
+  {
+    const Bookclub = await this.BookclubRepository.findOne(bookclub);
+    const Book = await this.BookRepository.findOne(Bookclub.book);
+    const Members = await this.MembershipRepository.find({bookclub});
+    const lastODL = await this.ODLService.getLastODL(bookclub);
+    let ODLGoal ; Number;
+    if(!lastODL) ODLGoal = 0;
+    else ODLGoal = lastODL.pages;
+    const readyMembers = await this.ODLService.checkODLStatus(bookclub);
+    const PDLPercentage = await this.PDLService.getPercentage(user,bookclub);
+
+    const BoockclubInfo = {
+      Bookclub : Bookclub,
+      Book : Book,
+      Members : Members,
+      ODLGoal : ODLGoal,
+      ODLMembers : readyMembers,
+      PDLPercentage : PDLPercentage
+    }
+
+    return BoockclubInfo;
   }
 }

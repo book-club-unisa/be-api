@@ -9,6 +9,7 @@ import { PDL } from 'src/Entities/PDL';
 import { ReadSession } from 'src/Entities/ReadSession';
 import { User } from 'src/Entities/User';
 import { MembershipService } from 'src/Membership/membership.service';
+import { PdlService } from 'src/PDL/PDL.service';
 import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
 import { UserService } from 'src/User/user.service';
 import { OdlController } from './odl.controller';
@@ -26,6 +27,6 @@ import { OdlService } from './odl.service';
       TypeOrmModule.forFeature([PDL])
     ],
   controllers: [OdlController],
-  providers: [OdlService,UserService,BookclubService,ReadSessionService,MembershipService]
+  providers: [OdlService,UserService,BookclubService,ReadSessionService,MembershipService, PdlService]
 })
 export class OdlModule {}
