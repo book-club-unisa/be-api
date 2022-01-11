@@ -25,7 +25,8 @@ export class MembershipService {
     const memberShip = this.MembershipRepository.create({
       bookclub: bookclubId,
       user: user,
-      State : 'NOT COMPLETED'
+      State : 'NOT COMPLETED',
+      pageReached : 0
     });
 
     const id = bookclubId;

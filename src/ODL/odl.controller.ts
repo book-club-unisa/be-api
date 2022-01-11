@@ -32,6 +32,8 @@ export class OdlController {
         if(result == 'UNAUTHORIZED') throw new HttpException('',HttpStatus.UNAUTHORIZED);
         const newODL : number = parseInt(milestone.numPages,10);
         if(newODL == NaN || newODL<=0) throw new HttpException('INVALID PDL', HttpStatus.BAD_REQUEST);
-        else return this.OdlService.updateLastReadGoal(newODL,bookclubId);
+        const result2 = await this.OdlService.checkStatus(bookclubId);
+        if(result2 == 'CREATE') return this.OdlService.createODL(bookclubId,newODL);     
+        else return this.OdlService.updateODL(bookclubId,newODL);
     }
 }

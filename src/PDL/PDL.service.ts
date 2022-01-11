@@ -48,7 +48,7 @@ export class PdlService {
                 const member = await this.MembershipRepository.findOne({bookclub,user});
                 if(member){
                     member.State = 'COMPLETED';
-
+                    member.pageReached = bookPages;
                     await this.MembershipRepository.save(member);
                 }
             })
@@ -63,6 +63,16 @@ export class PdlService {
             session : activeSession.id,
             createDate : new Date().toISOString()
         });
+        const BCs = await this.BookclubRepository.find({book});
+            BCs.forEach(async (BC) => {
+                const bookclub = BC.id;
+                const member = await this.MembershipRepository.findOne({bookclub,user});
+                if(member){
+                    const tmp = member.pageReached
+                    member.pageReached = tmp + newPDL;
+                    await this.MembershipRepository.save(member);
+                }
+            })
         return await this.PDLRepository.save(PDL);
     }
 

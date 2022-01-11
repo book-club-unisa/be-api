@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
@@ -32,41 +32,19 @@ export class OdlService {
         return lastODL;
     }
 
-    async updateLastReadGoal(milestone : number, bookclub : number,){
-        const tmp = await this.BookclubRepository.findOne(bookclub);
-        const tmp2 = await this.BookRepository.findOne(tmp.book);
-        const maxPages = tmp2.pagesCount;
-        const book = tmp2.isbn;
- 
-        if(milestone>maxPages) throw new HttpException('',HttpStatus.BAD_REQUEST);
-        const lastODL = await this.getLastODL(bookclub);
-        if(!lastODL){
-            const newODL = this.ODLRepository.create({
-                bookclub : bookclub,
-                pages : milestone,
-            })
-            return await this.ODLRepository.save(newODL);
-        }
 
-        const members = await this.MembershipRepository.find({bookclub});
-        members.forEach(async (member) =>{
-            if(member.State == 'NOT COMPLETED'){
-                const State = 'ACTIVE';
-                const user = member.user;
-                const sessionId = await this.ReadSessionRepository.findOne({user,book,State});
-                const PDL = await this.ReadSessionService.getPages(sessionId.id);
-                if(PDL < lastODL.pages){
-                    lastODL.pages = milestone;
-                    return this.ODLRepository.save(lastODL);
-                }
+    async getSecondLastODL(bookclub : number, milestone : number){
+        const lastODLs = await this.ODLRepository.find({bookclub});
+        let lastODL : ODL;
+        let x = 0;
+        if(lastODLs.length < 2) return undefined;
+        lastODLs.forEach((ODL) =>{
+            if(ODL.pages > x && ODL.pages != milestone){
+                x = ODL.pages;
+                lastODL = ODL;
             }
         })
-
-        const newODL = this.ODLRepository.create({
-            bookclub : bookclub,
-            pages : milestone,
-        })
-        return await this.ODLRepository.save(newODL);
+        return lastODL;
     }
 
     async checkODLStatus(bookclub : number) : Promise <Bookclub_membership[]>{
@@ -87,5 +65,45 @@ export class OdlService {
         })
 
         return readyMembers;
+    }
+
+    async createODL(bookclub : number, milestone : number){
+        const tmp = await this.BookclubRepository.findOne(bookclub);
+        const tmp2 = await this.BookRepository.findOne(tmp.book);
+        const lastODL = await this.getLastODL(bookclub);
+        const maxPages = tmp2.pagesCount;
+        if(milestone>maxPages || milestone<=lastODL.pages) throw new HttpException('',HttpStatus.BAD_REQUEST);
+        const newODL = this.ODLRepository.create({
+            bookclub : bookclub,
+            pages : milestone,
+        })
+        return await this.ODLRepository.save(newODL);
+    }
+
+    async updateODL(bookclub : number, milestone : number){
+        const tmp = await this.BookclubRepository.findOne(bookclub);
+        const tmp2 = await this.BookRepository.findOne(tmp.book);
+        const lastODL = await this.getLastODL(bookclub);
+        const maxPages = tmp2.pagesCount;
+        if(milestone>maxPages || milestone<=lastODL.pages) throw new HttpException('',HttpStatus.BAD_REQUEST);
+        else{
+            lastODL.pages = milestone;
+            return await this.ODLRepository.save(lastODL);
+        }
+    }
+
+    async checkStatus(bookclub : number){
+        const tmp = await this.BookclubRepository.findOne(bookclub);
+        const members = await this.MembershipRepository.find({bookclub})
+        const lastODL = await this.getLastODL(bookclub);
+        let x = 0;
+        if(!lastODL) return 'CREATE';
+        members.forEach((member) =>{
+            if(member.pageReached <lastODL.pages) {
+                x = 1;
+                return 'UPDATE';
+            }
+        })
+        if(x == 0) return 'CREATE';
     }
 }

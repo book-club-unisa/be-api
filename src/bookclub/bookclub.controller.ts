@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,6 +10,7 @@ import {
   Inject,
   Param,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BookclubService } from './bookclub.service';
 import { UserService } from 'src/User/user.service';
@@ -45,7 +47,7 @@ export class BookclubController {
     } else return 'UNAUTHORIZED';
   }
 
-  @Post('/create')
+  @Post('')
   async createBookclub(
     @Headers('Authorization') token: string | undefined,
     @Body() bookclub : AddBookclub,
@@ -73,23 +75,23 @@ export class BookclubController {
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Get('/member')
-  async findBookclubs(
+  @Get('/mine')
+  async findBookclubsByToken(
     @Headers('Authorization') token: string | undefined,){
     const result = await this.loadPermissionsByToken(token);
-    if (result != 'UNAUTHORIZED')
-      return this.BookclubService.findBookclubs(result);
+    if (result != 'UNAUTHORIZED') return this.BookclubService.findBookclubsInfo(result);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Get('/enter/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/:id')
   async enterBookclub(
     @Param('id') bookclub : number,
     @Headers('Authorization') token : string|undefined
   ){
     const result = await this.loadPermissionsByToken(token);
     if(result == 'UNAUTHORIZED') throw new HttpException('',HttpStatus.UNAUTHORIZED);
-    this.MembershipService.findMember(bookclub,result);
-    return this.BookclubService.enterBookclub(result,bookclub);
+    await this.MembershipService.findMember(bookclub,result);
+    return this.BookclubService.enterBookclub(bookclub);
   }
 }

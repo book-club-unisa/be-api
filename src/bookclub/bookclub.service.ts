@@ -4,11 +4,14 @@ import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
 import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
 import { Bookclub_user_invite } from 'src/Entities/Bookclub_user_invite';
+import { Member } from 'src/entities/Member';
+import { ReadGoal } from 'src/entities/ReadGoal';
+import { User } from 'src/Entities/User';
 import { MembershipService } from 'src/Membership/membership.service';
 import { OdlService } from 'src/ODL/odl.service';
 import { PdlService } from 'src/PDL/PDL.service';
 import { Repository } from 'typeorm';
-import { BoockclubInfo } from './BookclubInfo';
+import { BookclubInfo } from './BookclubInfo';
 
 @Injectable()
 export class BookclubService {
@@ -18,6 +21,7 @@ export class BookclubService {
   ) {}
   @Inject(MembershipService) private readonly MembershipService: MembershipService;
   @InjectRepository(Book) private readonly BookRepository : Repository<Book>
+  @InjectRepository(User) private readonly UserRepository : Repository<User>
   @InjectRepository(Bookclub_membership) private readonly MembershipRepository : Repository<Bookclub_membership>
   @Inject(OdlService) private readonly ODLService : OdlService
   @Inject(PdlService) private readonly PDLService : PdlService
@@ -78,27 +82,66 @@ export class BookclubService {
     return 'BOOKCLUB DELETED';
   }
 
-  async enterBookclub(user : string, bookclub : number) : Promise <BoockclubInfo>
+  async findBookclubsInfo(user : string){
+    const Members = await this.MembershipRepository.find({user});
+    let BookclubInfos : BookclubInfo[] = [];
+    Members.forEach(async(Member) =>{
+      const id = Member.bookclub;
+      const x : BookclubInfo = await this.enterBookclub(id);
+      BookclubInfos.push(x);
+    })
+
+    return BookclubInfos;
+  }
+
+  async enterBookclub(bookclub : number) : Promise <BookclubInfo>
   {
     const Bookclub = await this.BookclubRepository.findOne(bookclub);
-    const Book = await this.BookRepository.findOne(Bookclub.book);
+    const book = await this.BookRepository.findOne(Bookclub.book);
     const Members = await this.MembershipRepository.find({bookclub});
-    const lastODL = await this.ODLService.getLastODL(bookclub);
-    let ODLGoal ; Number;
-    if(!lastODL) ODLGoal = 0;
-    else ODLGoal = lastODL.pages;
-    const readyMembers = await this.ODLService.checkODLStatus(bookclub);
-    const PDLPercentage = await this.PDLService.getPercentage(user,bookclub);
+    let Membri : Member[] = [];
+    Members.forEach(async(Member) =>{
+      const user = await this.UserRepository.findOne(Member.user);
+      const x : Member ={
+        membershipId : Member.membershipId,
+        user : new User(user),
+        pageReached : Member.pageReached
+      }
 
-    const BoockclubInfo = {
-      Bookclub : Bookclub,
-      Book : Book,
-      Members : Members,
-      ODLGoal : ODLGoal,
-      ODLMembers : readyMembers,
-      PDLPercentage : PDLPercentage
+      Membri.push(x);
+    })
+
+    const lastReadGoal : ReadGoal = {
+      readGoalId : -1,
+      pagesCount : 0
+    }
+    const lastODL = await this.ODLService.getLastODL(bookclub);
+    if(lastODL){
+      lastReadGoal.readGoalId = lastODL.id,
+      lastReadGoal.pagesCount = lastODL.pages
     }
 
-    return BoockclubInfo;
+    const secondLastReadGoal : ReadGoal = {
+      readGoalId : -1,
+      pagesCount : 0
+    }
+    const secondLastODL = await this.ODLService.getSecondLastODL(bookclub,lastODL.pages);
+    if(secondLastODL){
+      secondLastReadGoal.readGoalId = secondLastODL.id,
+      secondLastReadGoal.pagesCount = secondLastODL.pages
+    }
+
+
+    const BookclubInfo : BookclubInfo = {
+      id : bookclub,
+      name : Bookclub.bookclubName,
+      founderEmail : Bookclub.founder,
+      Book : book,
+      Members : Membri,
+      lastReadGoal : lastReadGoal,
+      secondLastReadGoal : secondLastReadGoal
+    }
+
+    return BookclubInfo
   }
 }

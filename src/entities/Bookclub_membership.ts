@@ -35,4 +35,10 @@ export class Bookclub_membership {
     type : 'varchar'
   })
   State : string
+
+  @Column({
+    name : 'pageReached',
+    type : 'int'
+  })
+  pageReached : number
 }

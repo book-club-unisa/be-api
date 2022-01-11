@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { BookDto } from 'src/dtos/book.dto';
 import { BookService } from './book.service';
-import{Pagination} from 'nestjs-typeorm-paginate';
 import { Book } from 'src/Entities/Book';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Controller()
 export class BookController {

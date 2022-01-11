@@ -1,12 +1,13 @@
 import { Book } from "src/Entities/Book";
-import { Bookclub } from "src/Entities/Bookclub";
-import { Bookclub_membership } from "src/Entities/Bookclub_membership";
+import { Member } from "src/entities/Member";
+import { ReadGoal } from "src/entities/ReadGoal";
 
-export class BoockclubInfo{
-    Bookclub : Bookclub
+export class BookclubInfo{
+    id : number
+    name : string
+    founderEmail : string
     Book : Book
-    Members : Bookclub_membership[]
-    ODLGoal : number
-    ODLMembers : Bookclub_membership[]
-    PDLPercentage : number
+    Members : Member[]
+    lastReadGoal : ReadGoal
+    secondLastReadGoal : ReadGoal
 }
