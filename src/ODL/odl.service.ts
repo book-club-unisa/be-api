@@ -71,6 +71,13 @@ export class OdlService {
         const tmp = await this.BookclubRepository.findOne(bookclub);
         const tmp2 = await this.BookRepository.findOne(tmp.book);
         const lastODL = await this.getLastODL(bookclub);
+        if(!lastODL){
+            const newODL = this.ODLRepository.create({
+                bookclub : bookclub,
+                pages : milestone,
+            })
+            return await this.ODLRepository.save(newODL);
+        }
         const maxPages = tmp2.pagesCount;
         if(milestone>maxPages || milestone<=lastODL.pages) throw new HttpException('',HttpStatus.BAD_REQUEST);
         const newODL = this.ODLRepository.create({
