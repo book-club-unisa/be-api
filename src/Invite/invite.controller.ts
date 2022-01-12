@@ -105,7 +105,7 @@ export class InviteController {
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
-  @Get('bookclubs/:id/seeInvites')
+  @Get('bookclubs/:id/invited-users')
   async seeInvites(
     @Param('id') id : number,
     @Headers('Authorization') token : string|undefined

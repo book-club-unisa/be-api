@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
@@ -56,6 +56,12 @@ export class BookclubService {
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
+  async findBookclubId(bookclubName : string, founder : string){
+    const Bookclub = await this.BookclubRepository.findOne({bookclubName,founder});
+    if(!Bookclub) throw new NotFoundException('Bookclub not found');
+    return Bookclub.id;
+  }
+
   async findBookclub(id: number) {
     const check = await this.BookclubRepository.findOne(id);
     if (!check)
@@ -85,13 +91,24 @@ export class BookclubService {
   async findBookclubsInfo(user : string){
     const Members = await this.MembershipRepository.find({user});
     let BookclubInfos : BookclubInfo[] = [];
+    let tmp = 0;
+    let max = Members.length;
+    console.log('MAX : ' + max);
     Members.forEach(async(Member) =>{
       const id = Member.bookclub;
       const x : BookclubInfo = await this.enterBookclub(id);
-      BookclubInfos.push(x);
-    })
-
-    return BookclubInfos;
+      if(x != undefined){
+        BookclubInfos.push(x);
+        if(tmp < max-1) 
+        {
+          tmp++;
+          console.log('NON Ancora ' + tmp + ' CONTRO ' + max)
+        }else{
+          console.log('ARRIVATO')
+          return BookclubInfos;
+        }
+      }
+    });
   }
 
   async enterBookclub(bookclub : number) : Promise <BookclubInfo>
@@ -125,11 +142,14 @@ export class BookclubService {
       readGoalId : -1,
       pagesCount : 0
     }
-    const secondLastODL = await this.ODLService.getSecondLastODL(bookclub,lastODL.pages);
-    if(secondLastODL){
+    if(lastODL){
+      const secondLastODL = await this.ODLService.getSecondLastODL(bookclub,lastODL.pages);
+      if(secondLastODL){
       secondLastReadGoal.readGoalId = secondLastODL.id,
       secondLastReadGoal.pagesCount = secondLastODL.pages
+      }
     }
+    
 
 
     const BookclubInfo : BookclubInfo = {
