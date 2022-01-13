@@ -17,7 +17,7 @@ export class MembershipService {
 
   async findMember(bookclub: number, user: string) {
     const member =  await this.MembershipRepository.find({ bookclub, user });
-    if(!member) throw new HttpException('',HttpStatus.UNAUTHORIZED);
+    if(!member.length) throw new HttpException('',HttpStatus.UNAUTHORIZED);
     return member
   }
 
