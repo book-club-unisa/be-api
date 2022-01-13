@@ -1,9 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from 'src/Entities/Book';
 import { Bookclub } from 'src/Entities/Bookclub';
 import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
 import { ReadSession } from 'src/Entities/ReadSession';
+import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class MembershipService {
   ) {}
   @InjectRepository(ReadSession) private readonly ReadSessionRepository : Repository<ReadSession>
   @InjectRepository(Bookclub) private readonly BookclubRepository : Repository<Bookclub>
+  @Inject(ReadSessionService) private readonly ReadSessionService : ReadSessionService
 
   async findMember(bookclub: number, user: string) {
     const member =  await this.MembershipRepository.find({ bookclub, user });
@@ -41,6 +43,9 @@ export class MembershipService {
         State : 'ACTIVE'
       });
       await this.ReadSessionRepository.save(newSession);
+    }else{
+      const pageReached = await this.ReadSessionService.getPages(readSession.id);
+      memberShip.pageReached = pageReached;
     }
 
     await this.MembershipRepository.save(memberShip);
