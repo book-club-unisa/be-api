@@ -91,24 +91,14 @@ export class BookclubService {
   async findBookclubsInfo(user : string){
     const Members = await this.MembershipRepository.find({user});
     let BookclubInfos : BookclubInfo[] = [];
-    let tmp = 0;
-    let max = Members.length;
-    console.log('MAX : ' + max);
-    Members.forEach(async(Member) =>{
+    for(var i =0; i<Members.length; i++){
+      const Member =  Members[i];
       const id = Member.bookclub;
       const x : BookclubInfo = await this.enterBookclub(id);
-      if(x != undefined){
-        BookclubInfos.push(x);
-        if(tmp < max-1) 
-        {
-          tmp++;
-          console.log('NON Ancora ' + tmp + ' CONTRO ' + max)
-        }else{
-          console.log('ARRIVATO')
-          return BookclubInfos;
-        }
-      }
-    });
+      BookclubInfos.push(x);
+    }     
+    
+    return BookclubInfos
   }
 
   async enterBookclub(bookclub : number) : Promise <BookclubInfo>
@@ -124,7 +114,6 @@ export class BookclubService {
         user : new User(user),
         pageReached : Member.pageReached
       }
-
       Membri.push(x);
     })
 

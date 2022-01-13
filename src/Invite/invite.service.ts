@@ -1,10 +1,13 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookclubService } from 'src/Bookclub/bookclub.service';
+import { Book } from 'src/Entities/Book';
+import { Bookclub } from 'src/Entities/Bookclub';
 import { Bookclub_user_invite } from 'src/Entities/Bookclub_user_invite';
 import { MembershipService } from 'src/Membership/membership.service';
 import { UserService } from 'src/User/user.service';
 import { Repository } from 'typeorm';
+import { InvitoResponse } from './InvitoResponse';
 
 @Injectable()
 export class InviteService {
@@ -14,8 +17,10 @@ export class InviteService {
   ) {}
   @Inject(UserService) private readonly UserService: UserService;
   @Inject(BookclubService) private readonly BookclubService: BookclubService;
-  @Inject(MembershipService)
-  private readonly MembershipService: MembershipService;
+  @Inject(MembershipService) private readonly MembershipService: MembershipService;
+  @InjectRepository(Bookclub) private readonly BookclubRepository : Repository<Bookclub>
+  @InjectRepository(Book) private readonly BookRepository : Repository<Book>
+
 
   async inviteUser(user: string, bookclub: number) {
     await this.UserService.findUserByEmail(user);
@@ -42,9 +47,33 @@ export class InviteService {
   }
 
 
-  async getInvites(user : string) : Promise <Bookclub_user_invite[]>{
+  async getInvites(user : string) : Promise<InvitoResponse[]>{
     const invites = await this.InviteRepository.find({user});
-    return invites
+    console.log(invites);
+    const Inviti: InvitoResponse[] = [];
+    let Bookclub : Bookclub;
+    let Book : Book;
+    let Invite : InvitoResponse;
+    let URL : string;
+    let bookclubName : string;
+
+    for(var i = 0; i<invites.length; i++){
+      const invite =  invites[i];
+
+      Bookclub = await this.BookclubRepository.findOne(invite.bookclub);
+      bookclubName = Bookclub.bookclubName;
+      Book = await this.BookRepository.findOne(Bookclub.book);
+      URL = Book.coverUrl;
+
+      Invite = {
+        invitoUtente : invite,
+        nomeBookclub : bookclubName,
+        coverLibro : URL
+      }
+      Inviti.push(Invite);
+    }
+
+    return Inviti;
   }
 
   async seeInvites(bookclub : number){

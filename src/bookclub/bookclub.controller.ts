@@ -75,13 +75,13 @@ export class BookclubController {
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/mine')
   async findBookclubsByToken(
     @Headers('Authorization') token: string | undefined){
     const result = await this.loadPermissionsByToken(token);
     if (result != 'UNAUTHORIZED') {
       const x = await this.BookclubService.findBookclubsInfo(result);
-      console.log(x);
       return x;
     }
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
