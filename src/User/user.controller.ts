@@ -28,6 +28,15 @@ function exitUnauthorized() {
 export class UserController {
   constructor(private readonly UserService: UserService) {}
 
+  async loadPermissionsByToken(token: string | undefined): Promise<string> {
+    if (!token)  return 'UNAUTHORIZED';
+    
+    const plainData = Buffer.from(token, 'base64').toString();
+    const [email, password] = plainData.split('@@@');
+    if ((await this.UserService.findUser(email, password)) == 'FOUND') return email;
+    else return 'UNAUTHORIZED';
+  }
+
   @Post('')
   @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(ValidationPipe)
@@ -62,6 +71,17 @@ export class UserController {
     const result = await this.UserService.findUserByEmail(email);
     if (result.email == '') throw new HttpException('Email not found', 400);
     else return result;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('/emailByToken')
+  async getEmailByToken(@Headers('Authorization') token: string | undefined){
+    const result = await this.loadPermissionsByToken(token);
+    if (result != 'UNAUTHORIZED') {
+      const tmp = await this.UserService.findUserByEmail(result);
+      console.log(tmp);
+      return tmp;
+    }
   }
 
   @Put(':email')

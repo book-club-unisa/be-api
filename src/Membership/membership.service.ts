@@ -19,8 +19,7 @@ export class MembershipService {
 
   async findMember(bookclub: number, user: string) {
     const member =  await this.MembershipRepository.find({ bookclub, user });
-    if(!member.length) throw new HttpException('',HttpStatus.UNAUTHORIZED);
-    return member
+    return member;
   }
 
   async addMember(bookclubId: number, user: string) {
