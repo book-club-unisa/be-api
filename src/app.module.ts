@@ -38,7 +38,7 @@ import { OdlService } from './ODL/odl.service';
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'BC',
+      database: 'books',
       entities: [
         Bookclub,
         User,
@@ -47,7 +47,7 @@ import { OdlService } from './ODL/odl.service';
         Bookclub_membership,
         ReadSession,
         PDL,
-        ODL
+        ODL,
       ],
       synchronize: false,
     }),
@@ -72,7 +72,7 @@ import { OdlService } from './ODL/odl.service';
     BookclubController,
     InviteController,
     PdlController,
-    OdlController
+    OdlController,
   ],
   providers: [
     UserService,
@@ -83,7 +83,7 @@ import { OdlService } from './ODL/odl.service';
     MembershipService,
     PdlService,
     ReadSessionService,
-    OdlService
+    OdlService,
   ],
 })
 export class AppModule {}
