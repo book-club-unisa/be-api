@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Book } from 'src/Entities/Book';
-import { Bookclub } from 'src/Entities/Bookclub';
-import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
-import { ODL } from 'src/Entities/ODL';
-import { PDL } from 'src/Entities/PDL';
-import { ReadSession } from 'src/Entities/ReadSession';
-import { User } from 'src/Entities/User';
-import { MembershipService } from 'src/Membership/membership.service';
-import { OdlService } from 'src/ODL/odl.service';
-import { PdlService } from 'src/PDL/PDL.service';
-import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
-import { UserService } from 'src/User/user.service';
-import { BookclubController } from './bookclub.controller';
-import { BookclubService } from './bookclub.service';
+import { UserService } from '../User/user.service';
+import { User } from '../User/User';
+import { Book } from '../Book/Book';
+import { Bookclub } from './Bookclub';
+import { BookclubController } from '../Bookclub/bookclub.controller';
+import { BookclubService } from '../Bookclub/bookclub.service';
+import { Bookclub_membership } from '../Membership/Bookclub_membership';
+import { MembershipService } from '../Membership/membership.service';
+import { ReadSession } from '../ReadSession/ReadSession';
+import { PDL } from '../PDL/PDL';
+import { PdlService } from '../PDL/PDL.service';
+import { ReadSessionService } from '../ReadSession/ReadSession.service';
+import { ODL } from '../ODL/ODL';
+import { OdlService } from '../ODL/odl.service';
 
 @Module({
   imports: [
@@ -23,9 +23,16 @@ import { BookclubService } from './bookclub.service';
     TypeOrmModule.forFeature([Bookclub_membership]),
     TypeOrmModule.forFeature([ReadSession]),
     TypeOrmModule.forFeature([ODL]),
-    TypeOrmModule.forFeature([PDL])
+    TypeOrmModule.forFeature([PDL]),
   ],
   controllers: [BookclubController],
-  providers: [BookclubService, UserService, MembershipService, OdlService, ReadSessionService, PdlService],
+  providers: [
+    BookclubService,
+    UserService,
+    MembershipService,
+    OdlService,
+    ReadSessionService,
+    PdlService,
+  ],
 })
 export class BookclubModule {}

@@ -1,21 +1,21 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookclubModule } from 'src/Bookclub/bookclub.module';
-import { BookclubService } from 'src/Bookclub/bookclub.service';
-import { Book } from 'src/Entities/Book';
-import { Bookclub } from 'src/Entities/Bookclub';
-import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
-import { Bookclub_user_invite } from 'src/Entities/Bookclub_user_invite';
-import { ODL } from 'src/Entities/ODL';
-import { PDL } from 'src/Entities/PDL';
-import { ReadSession } from 'src/Entities/ReadSession';
-import { User } from 'src/Entities/User';
-import { MembershipModule } from 'src/Membership/membership.module';
-import { MembershipService } from 'src/Membership/membership.service';
-import { OdlService } from 'src/ODL/odl.service';
-import { PdlService } from 'src/PDL/PDL.service';
-import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
-import { UserService } from 'src/User/user.service';
+import { BookclubModule } from '../Bookclub/bookclub.module';
+import { BookclubService } from '../Bookclub/bookclub.service';
+import { Book } from '../Book/Book';
+import { Bookclub } from '../Bookclub/Bookclub';
+import { Bookclub_membership } from '../Membership/Bookclub_membership';
+import { Bookclub_user_invite } from './Bookclub_user_invite';
+import { ODL } from '../ODL/ODL';
+import { PDL } from '../PDL/PDL';
+import { ReadSession } from '../ReadSession/ReadSession';
+import { User } from '../User/User';
+import { MembershipModule } from '../Membership/membership.module';
+import { MembershipService } from '../Membership/membership.service';
+import { OdlService } from '../ODL/odl.service';
+import { PdlService } from '../PDL/PDL.service';
+import { ReadSessionService } from '../ReadSession/ReadSession.service';
+import { UserService } from '../User/user.service';
 import { InviteController } from './invite.controller';
 import { InviteService } from './invite.service';
 
@@ -33,6 +33,14 @@ import { InviteService } from './invite.service';
     MembershipModule,
   ],
   controllers: [InviteController],
-  providers: [InviteService, UserService, BookclubService, MembershipService, OdlService, ReadSessionService, PdlService],
+  providers: [
+    InviteService,
+    UserService,
+    BookclubService,
+    MembershipService,
+    OdlService,
+    ReadSessionService,
+    PdlService,
+  ],
 })
 export class InviteModule {}

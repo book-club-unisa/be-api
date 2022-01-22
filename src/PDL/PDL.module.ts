@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Book } from 'src/Entities/Book';
-import { Bookclub } from 'src/Entities/Bookclub';
-import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
-import { PDL } from 'src/Entities/PDL';
-import { ReadSession } from 'src/Entities/ReadSession';
-import { User } from 'src/Entities/User';
-import { MembershipService } from 'src/Membership/membership.service';
-import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
-import { UserService } from 'src/User/user.service';
+import { Book } from '../Book/Book';
+import { Bookclub } from '../Bookclub/Bookclub';
+import { Bookclub_membership } from '../Membership/Bookclub_membership';
+import { PDL } from './PDL';
+import { ReadSession } from '../ReadSession/ReadSession';
+import { User } from '../User/User';
+import { MembershipService } from '../Membership/membership.service';
+import { ReadSessionService } from '../ReadSession/ReadSession.service';
+import { UserService } from '../User/user.service';
 import { PdlController } from './PDL.controller';
 import { PdlService } from './PDL.service';
 

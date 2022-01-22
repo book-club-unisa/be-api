@@ -5,8 +5,8 @@ import {
     PrimaryColumn,
     PrimaryGeneratedColumn,
   } from 'typeorm';
-  import { Book} from './Book';
-  import { User } from './User';
+  import { Book} from '../Book/Book';
+  import { User } from '../User/User';
   
   @Entity()
   export class ReadSession {

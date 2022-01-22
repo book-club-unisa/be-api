@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Book } from 'src/Entities/Book';
-import { Bookclub } from 'src/Entities/Bookclub';
-import { Bookclub_membership } from 'src/Entities/Bookclub_membership';
-import { PDL } from 'src/Entities/PDL';
-import { ReadSession } from 'src/Entities/ReadSession';
-import { ReadSessionService } from 'src/ReadSession/ReadSession.service';
+import { Book } from '../Book/Book';
+import { Bookclub } from '../Bookclub/Bookclub';
+import { Bookclub_membership } from '../Membership/Bookclub_membership';
+import { PDL } from './PDL';
+import { ReadSession } from '../ReadSession/ReadSession';
+import { ReadSessionService } from '../ReadSession/ReadSession.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class PdlService {
     @InjectRepository(Bookclub_membership) private readonly MembershipRepository : Repository<Bookclub_membership>
  
 
-    async addPDL(newPDL : number, user : string, id : number){
+    async addPDL(newPDL : number, user : string, id : number) : Promise<PDL>{
         const tmp = await this.BookclubRepository.findOne({id});
         if(!tmp) throw new HttpException('INVALID BOOKCLUB',HttpStatus.BAD_REQUEST);
         const bookIsbn  = tmp.book;
@@ -34,7 +34,7 @@ export class PdlService {
         const sessionId = activeSession.id;
         const oldPDLs : number = await this.ReadSessionService.getPages(sessionId);
 
-        if(newPDL + oldPDLs>bookPages){
+        if(newPDL + oldPDLs >= bookPages){
             newPDL = bookPages - oldPDLs;
             const PDL = this.PDLRepository.create({
                 pages : newPDL,
@@ -91,15 +91,15 @@ export class PdlService {
         }
     }
 
-
-    async getReadSessions(user : string){
+    async getReadSessions(user : string) : Promise<ReadSession[]>{
         const sessions = await this.ReadSessionRepository.find({user});
         return sessions;
     }
 
-    async getPDLs(id : number, user : string){
-        const session = await this.ReadSessionRepository.find({id,user});
-        if(!session) throw new HttpException('', HttpStatus.UNAUTHORIZED);
-        return await this.PDLRepository.find({id})
+    async getPDLs(id : number, user : string) : Promise<PDL[]>{
+        const sessione = await this.ReadSessionRepository.findOne({id,user});
+        if(!sessione) throw new HttpException('', HttpStatus.UNAUTHORIZED);
+        const session = sessione.id;
+        return await this.PDLRepository.find({session})
     }
 }

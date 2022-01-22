@@ -1,6 +1,6 @@
 import { Body, Controller, Headers, HttpException, HttpStatus, Inject, Param, Post } from '@nestjs/common';
-import { BookclubService } from 'src/Bookclub/bookclub.service';
-import { UserService } from 'src/User/user.service';
+import { BookclubService } from '../Bookclub/bookclub.service';
+import { UserService } from '../User/user.service';
 import { AddODL } from './AddODL';
 import { OdlService } from './odl.service';
 

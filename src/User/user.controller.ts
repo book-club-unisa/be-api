@@ -9,20 +9,15 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
+  UnauthorizedException,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserDto } from 'src/dtos/user.dto';
-import { User } from 'src/Entities/User';
+import { UserDto } from './user.dto';
+import { User } from './User';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UserService, userPermissions } from './user.service';
-import { UpdateUserDto } from 'src/dtos/update-user.dto';
-
-function exitUnauthorized() {
-  throw new HttpException(undefined, HttpStatus.UNAUTHORIZED);
-}
+import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
@@ -30,7 +25,6 @@ export class UserController {
 
   async loadPermissionsByToken(token: string | undefined): Promise<string> {
     if (!token)  return 'UNAUTHORIZED';
-    
     const plainData = Buffer.from(token, 'base64').toString();
     const [email, password] = plainData.split('@@@');
     if ((await this.UserService.findUser(email, password)) == 'FOUND') return email;
@@ -43,12 +37,7 @@ export class UserController {
   async createUser(@Body() user: UserDto) {
     return this.UserService.createUser(user);
   }
-
-  @Get('')
-  @UsePipes(ValidationPipe)
-  findAll(): Promise<User[]> {
-    return this.UserService.getAllUsers();
-  }
+  
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('sign-in')
@@ -79,35 +68,19 @@ export class UserController {
     const result = await this.loadPermissionsByToken(token);
     if (result != 'UNAUTHORIZED') {
       const tmp = await this.UserService.findUserByEmail(result);
-      console.log(tmp);
       return tmp;
     }
   }
 
-  @Put(':email')
-  @UsePipes(ValidationPipe)
-  async updateUser(
-    @Headers('Authorization') token: string | undefined,
-    @Param('email') email: string,
-    @Body() updateUser: UpdateUserDto,
-  ) {
-    const permissions = await this.UserService.loadPermissionsByToken(token);
-    if (!permissions.includes(userPermissions.updateAccount)) {
-      exitUnauthorized();
-    }
-    return this.UserService.updateUserByEmail(email, updateUser);
-  }
-
-  @Delete(':email')
+  @Delete('/:email')
   @UsePipes(ValidationPipe)
   async deleteUser(
     @Headers('Authorization') token: string | undefined,
     @Param('email') email: string,
   ) {
-    const permissions = await this.UserService.loadPermissionsByToken(token);
-    if (!permissions.includes(userPermissions.deleteAccount)) {
-      exitUnauthorized();
-    }
+    const permissions = await this.loadPermissionsByToken(token);
+    if (permissions == 'UNAUTHORIZED') throw new UnauthorizedException();
     return this.UserService.deleteUser(email);
   }
 }
+

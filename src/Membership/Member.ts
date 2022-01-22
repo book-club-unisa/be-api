@@ -1,4 +1,4 @@
-import { User } from "./User"
+import { User } from "../User/User"
 
 export class Member{
     membershipId : number

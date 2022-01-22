@@ -5,8 +5,8 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Bookclub } from './Bookclub';
-import { User } from './User';
+import { Bookclub } from '../Bookclub/Bookclub';
+import { User } from '../User/User';
 
 @Entity()
 export class Bookclub_user_invite {

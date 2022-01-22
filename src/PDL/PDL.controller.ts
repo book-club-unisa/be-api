@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Headers, HttpException, HttpStatus, Inject, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
-import { MembershipService } from 'src/Membership/membership.service';
-import { UserService } from 'src/User/user.service';
+import { MembershipService } from '../Membership/membership.service';
+import { UserService } from '../User/user.service';
 import { AddPDL } from './AddPDL';
 import { PdlService } from './PDL.service';
 

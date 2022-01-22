@@ -5,10 +5,10 @@ import {
     PrimaryColumn,
     PrimaryGeneratedColumn,
   } from 'typeorm';
-import { Bookclub } from './Bookclub';
+  import { ReadSession } from '../ReadSession/ReadSession';
   
   @Entity()
-  export class ODL {
+  export class PDL {
 
     @PrimaryGeneratedColumn({
         name: 'id',
@@ -17,17 +17,24 @@ import { Bookclub } from './Bookclub';
     id: number;
     
 
-    @ManyToOne(() => Bookclub, (bookclub) => bookclub.id)
+    @ManyToOne(() => ReadSession, (readSession) => readSession.id)
     @Column({
-      name : 'bookclubId',
+      name : 'sessionId',
       type: 'int',
       nullable : false,
     })
-    bookclub: number;
+    session: number;
 
     @Column({
         name : 'PagesCount',
         type : 'int'
     })
-    pages : number   
+    pages : number
+
+
+    @Column({
+      name: 'CreateDate',
+      type: 'datetime',
+    })
+    createDate : Date;   
 }

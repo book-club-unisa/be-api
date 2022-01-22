@@ -1,13 +1,21 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BookclubService } from 'src/Bookclub/bookclub.service';
-import { Book } from 'src/Entities/Book';
-import { Bookclub } from 'src/Entities/Bookclub';
-import { Bookclub_user_invite } from 'src/Entities/Bookclub_user_invite';
-import { MembershipService } from 'src/Membership/membership.service';
-import { UserService } from 'src/User/user.service';
+import { BookclubService } from '../Bookclub/bookclub.service';
+import { Book } from '../Book/Book';
+import { Bookclub } from '../Bookclub/Bookclub';
+import { Bookclub_user_invite } from './Bookclub_user_invite';
+import { MembershipService } from '../Membership/membership.service';
+import { UserService } from '../User/user.service';
 import { Repository } from 'typeorm';
 import { InvitoResponse } from './InvitoResponse';
+import { Bookclub_membership } from '../Membership/Bookclub_membership';
 
 @Injectable()
 export class InviteService {
@@ -17,25 +25,21 @@ export class InviteService {
   ) {}
   @Inject(UserService) private readonly UserService: UserService;
   @Inject(BookclubService) private readonly BookclubService: BookclubService;
-  @Inject(MembershipService) private readonly MembershipService: MembershipService;
-  @InjectRepository(Bookclub) private readonly BookclubRepository : Repository<Bookclub>
-  @InjectRepository(Book) private readonly BookRepository : Repository<Book>
-
+  @Inject(MembershipService)
+  private readonly MembershipService: MembershipService;
+  @InjectRepository(Bookclub)
+  private readonly BookclubRepository: Repository<Bookclub>;
+  @InjectRepository(Book) private readonly BookRepository: Repository<Book>;
+  @InjectRepository(Bookclub_membership)
+  private readonly MembershipRepository: Repository<Bookclub_membership>;
 
   async inviteUser(user: string, bookclub: number) {
     await this.UserService.findUserByEmail(user);
-    const check = await this.MembershipService.findMember(bookclub, user);
-    const check2 = await this.InviteRepository.find({ bookclub, user });
-    if (check.length)
-      throw new HttpException(
-        'CANNOT INVITE A MEMBER OF YOUR OWN BOOKCLUB',
-        HttpStatus.FORBIDDEN,
-      );
-    else if (check2.length)
-      throw new HttpException(
-        'CANNOT INVITE A USER THAT HAS NOT REPLIED YET',
-        HttpStatus.BAD_REQUEST,
-      );
+    const id = bookclub;
+    const check3 = await this.BookclubRepository.findOne({ id });
+    if (!check3) throw new NotFoundException();
+    const check2 = await this.InviteRepository.findOne({ bookclub, user });
+    if (check2) throw new BadRequestException();
     else {
       const newInvite = this.InviteRepository.create({
         bookclub: bookclub,
@@ -46,19 +50,17 @@ export class InviteService {
     }
   }
 
-
-  async getInvites(user : string) : Promise<InvitoResponse[]>{
-    const invites = await this.InviteRepository.find({user});
-    console.log(invites);
+  async getInvites(user: string): Promise<InvitoResponse[]> {
+    const invites = await this.InviteRepository.find({ user });
     const Inviti: InvitoResponse[] = [];
-    let Bookclub : Bookclub;
-    let Book : Book;
-    let Invite : InvitoResponse;
-    let URL : string;
-    let bookclubName : string;
+    let Bookclub: Bookclub;
+    let Book: Book;
+    let Invite: InvitoResponse;
+    let URL: string;
+    let bookclubName: string;
 
-    for(var i = 0; i<invites.length; i++){
-      const invite =  invites[i];
+    for (let i = 0; i < invites.length; i++) {
+      const invite = invites[i];
 
       Bookclub = await this.BookclubRepository.findOne(invite.bookclub);
       bookclubName = Bookclub.bookclubName;
@@ -66,18 +68,18 @@ export class InviteService {
       URL = Book.coverUrl;
 
       Invite = {
-        invitoUtente : invite,
-        nomeBookclub : bookclubName,
-        coverLibro : URL
-      }
+        invitoUtente: invite,
+        nomeBookclub: bookclubName,
+        coverLibro: URL,
+      };
       Inviti.push(Invite);
     }
 
     return Inviti;
   }
 
-  async seeInvites(bookclub : number){
-    return await this.InviteRepository.find({bookclub});
+  async seeInvites(bookclub: number) {
+    return await this.InviteRepository.find({ bookclub });
   }
 
   async acceptInvite(inviteId: number, user: string) {
@@ -107,9 +109,9 @@ export class InviteService {
 
   async deleteInvite(user: string, bookclub: number) {
     const check = await this.InviteRepository.findOne({ user, bookclub });
-    if (check && check.State == 'PENDING')
+    if (check && check.State == 'PENDING') {
       return this.InviteRepository.delete(check);
-    else
+    } else
       throw new HttpException(
         'CANNOT DELETE A NON-PENDING INVITE',
         HttpStatus.UNAUTHORIZED,

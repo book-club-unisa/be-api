@@ -10,10 +10,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { BookclubService } from 'src/Bookclub/bookclub.service';
-import { UserService } from 'src/User/user.service';
+import { BookclubService } from '../Bookclub/bookclub.service';
+import { UserService } from '../User/user.service';
 import { InviteService } from './invite.service';
-import { InvitoResponse } from './InvitoResponse';
 
 @Controller('')
 export class InviteController {
@@ -97,23 +96,21 @@ export class InviteController {
   }
 
   @Get('invites/getInvites')
-  async getInvites(
-    @Headers('Authorization') token : string|undefined
-  ){
+  async getInvites(@Headers('Authorization') token: string | undefined) {
     const result = await this.loadPermissionsByTokenUser(token);
-    if (result == 'UNAUTHORIZED') throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
+    if (result == 'UNAUTHORIZED')
+      throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
     const invites = await this.InviteService.getInvites(result);
     return invites;
   }
 
   @Get('bookclubs/:id/invited-users')
   async seeInvites(
-    @Param('id') id : number,
-    @Headers('Authorization') token : string|undefined
-  ){
+    @Param('id') id: number,
+    @Headers('Authorization') token: string | undefined,
+  ) {
     const result = await this.loadPermissionsByTokenFounder(token, id);
-    if (result == 'AUTHORIZED')
-      return this.InviteService.seeInvites(id);
+    if (result == 'AUTHORIZED') return this.InviteService.seeInvites(id);
     else throw new HttpException('NOT AUTHORIZED', HttpStatus.UNAUTHORIZED);
   }
 }

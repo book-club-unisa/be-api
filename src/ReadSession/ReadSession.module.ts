@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PDL } from 'src/Entities/PDL';
-import { ReadSession } from 'src/Entities/ReadSession';
+import { PDL } from '../PDL/PDL';
+import { ReadSession } from './ReadSession';
 import { ReadSessionService } from './ReadSession.service';
 
 @Module({
