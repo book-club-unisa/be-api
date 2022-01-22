@@ -63,7 +63,7 @@ CREATE TABLE `bookclub` (
   KEY `FK_e3704c7146fa297dc164b7d6ba8` (`founderEmail`),
   CONSTRAINT `FK_b3e200b02c367c570a4b165db32` FOREIGN KEY (`bookIsbn`) REFERENCES `book` (`isbn`),
   CONSTRAINT `FK_e3704c7146fa297dc164b7d6ba8` FOREIGN KEY (`founderEmail`) REFERENCES `user` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `bookclub` (
 
 LOCK TABLES `bookclub` WRITE;
 /*!40000 ALTER TABLE `bookclub` DISABLE KEYS */;
-INSERT INTO `bookclub` VALUES (1,'AmatoBookclub','978-1-55-883235-1','alessiaamato@hotmail.it'),(2,'MorelliBookclub','978-1-66941-569-5','lucamorelli@libero.it'),(3,'LoriaBookclub','978-1-287-67224-1','umbertoloria@gmail.com'),(4,'RossiBookclub','978-1-875048-06-9','mariorossi@gmail.com');
+INSERT INTO `bookclub` VALUES (1,'AmatoBookclub','978-1-55-883235-1','alessiaamato@hotmail.it'),(2,'MorelliBookclub','978-1-66941-569-5','lucamorelli@libero.it'),(3,'LoriaBookclub','978-1-287-67224-1','umbertoloria@gmail.com'),(4,'RossiBookclub','978-1-875048-06-9','mariorossi@gmail.com'),(5,'UmbertoBookclub','978-1-01-406900-9','umbertoloria@gmail.com');
 /*!40000 ALTER TABLE `bookclub` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +94,7 @@ CREATE TABLE `bookclub_membership` (
   KEY `FK_56668b74ebb76e835484b6091e5` (`userEmail`),
   CONSTRAINT `FK_29689b4d38987a9c648e2cca2e4` FOREIGN KEY (`bookclubId`) REFERENCES `bookclub` (`id`),
   CONSTRAINT `FK_56668b74ebb76e835484b6091e5` FOREIGN KEY (`userEmail`) REFERENCES `user` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +103,7 @@ CREATE TABLE `bookclub_membership` (
 
 LOCK TABLES `bookclub_membership` WRITE;
 /*!40000 ALTER TABLE `bookclub_membership` DISABLE KEYS */;
-INSERT INTO `bookclub_membership` VALUES (1,'alessiaamato@hotmail.it',1,'NOT COMPLETED',100),(2,'lucamorelli@libero.it',2,'NOT COMPLETED',145),(3,'umbertoloria@gmail.com',3,'COMPLETED',192),(4,'mariorossi@gmail.com',4,'COMPLETED',144),(1,'antoniogiordano@hotmail.it',5,'NOT COMPLETED',110),(2,'antoniogiordano@hotmail.it',6,'NOT COMPLETED',30),(3,'antoniogiordano@hotmail.it',7,'NOT COMPLETED',45),(4,'antoniogiordano@hotmail.it',8,'NOT COMPLETED',75),(1,'giusepperagosta@libero.it',9,'NOT COMPLETED',35),(2,'giusepperagosta@libero.it',10,'NOT COMPLETED',43),(3,'giusepperagosta@libero.it',11,'NOT COMPLETED',76),(1,'alfonsomaddaloni@hotmail.it',12,'NOT COMPLETED',20),(2,'alfonsomaddaloni@hotmail.it',13,'NOT COMPLETED',80),(4,'alfonsomaddaloni@hotmail.it',14,'NOT COMPLETED',115),(2,'alessiaamato@hotmail.it',15,'NOT COMPLETED',81),(3,'alessiaamato@hotmail.it',16,'NOT COMPLETED',90);
+INSERT INTO `bookclub_membership` VALUES (1,'alessiaamato@hotmail.it',1,'NOT COMPLETED',100),(2,'lucamorelli@libero.it',2,'NOT COMPLETED',145),(3,'umbertoloria@gmail.com',3,'COMPLETED',192),(4,'mariorossi@gmail.com',4,'COMPLETED',144),(1,'antoniogiordano@hotmail.it',5,'NOT COMPLETED',110),(2,'antoniogiordano@hotmail.it',6,'NOT COMPLETED',81),(3,'antoniogiordano@hotmail.it',7,'NOT COMPLETED',45),(4,'antoniogiordano@hotmail.it',8,'NOT COMPLETED',75),(1,'giusepperagosta@libero.it',9,'NOT COMPLETED',35),(2,'giusepperagosta@libero.it',10,'NOT COMPLETED',83),(3,'giusepperagosta@libero.it',11,'NOT COMPLETED',76),(1,'alfonsomaddaloni@hotmail.it',12,'NOT COMPLETED',20),(2,'alfonsomaddaloni@hotmail.it',13,'NOT COMPLETED',80),(4,'alfonsomaddaloni@hotmail.it',14,'NOT COMPLETED',115),(2,'alessiaamato@hotmail.it',15,'NOT COMPLETED',81),(3,'alessiaamato@hotmail.it',16,'NOT COMPLETED',90),(5,'umbertoloria@gmail.com',17,'NOT COMPLETED',0);
 /*!40000 ALTER TABLE `bookclub_membership` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,7 +179,7 @@ CREATE TABLE `pdl` (
   PRIMARY KEY (`id`),
   KEY `FK_a1cd2892fe9a3d42ea1a3fc56bd` (`sessionId`),
   CONSTRAINT `FK_a1cd2892fe9a3d42ea1a3fc56bd` FOREIGN KEY (`sessionId`) REFERENCES `read_session` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +188,7 @@ CREATE TABLE `pdl` (
 
 LOCK TABLES `pdl` WRITE;
 /*!40000 ALTER TABLE `pdl` DISABLE KEYS */;
-INSERT INTO `pdl` VALUES (1,1,100,'2022-01-21 00:10:49'),(2,5,110,'2022-01-21 00:12:39'),(3,6,30,'2022-01-21 00:19:56'),(4,7,45,'2022-01-21 00:20:33'),(5,8,75,'2022-01-21 00:20:50'),(6,12,20,'2022-01-21 00:22:06'),(7,13,80,'2022-01-21 00:22:18'),(8,14,115,'2022-01-21 00:22:33'),(9,9,35,'2022-01-21 00:23:56'),(10,10,43,'2022-01-21 00:24:11'),(11,11,76,'2022-01-21 00:24:25'),(12,2,145,'2022-01-21 00:26:09'),(13,3,192,'2022-01-21 00:29:38'),(14,15,81,'2022-01-21 00:32:05'),(15,16,90,'2022-01-21 00:33:57'),(16,4,144,'2022-01-21 00:40:08'),(17,4,0,'2022-01-21 00:41:38');
+INSERT INTO `pdl` VALUES (1,1,100,'2022-01-21 00:10:49'),(2,5,110,'2022-01-21 00:12:39'),(3,6,30,'2022-01-21 00:19:56'),(4,7,45,'2022-01-21 00:20:33'),(5,8,75,'2022-01-21 00:20:50'),(6,12,20,'2022-01-21 00:22:06'),(7,13,80,'2022-01-21 00:22:18'),(8,14,115,'2022-01-21 00:22:33'),(9,9,35,'2022-01-21 00:23:56'),(10,10,43,'2022-01-21 00:24:11'),(11,11,76,'2022-01-21 00:24:25'),(12,2,145,'2022-01-21 00:26:09'),(13,3,192,'2022-01-21 00:29:38'),(14,15,81,'2022-01-21 00:32:05'),(15,16,90,'2022-01-21 00:33:57'),(16,4,144,'2022-01-21 00:40:08'),(17,4,0,'2022-01-21 00:41:38'),(18,10,40,'2022-01-22 16:57:40'),(19,6,51,'2022-01-22 16:58:38');
 /*!40000 ALTER TABLE `pdl` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -209,7 +209,7 @@ CREATE TABLE `read_session` (
   KEY `FK_761f04914f4a13cadd37361199c` (`userEmail`),
   CONSTRAINT `FK_761f04914f4a13cadd37361199c` FOREIGN KEY (`userEmail`) REFERENCES `user` (`email`),
   CONSTRAINT `FK_ac045a905e3d07cfe39479fa925` FOREIGN KEY (`bookIsbn`) REFERENCES `book` (`isbn`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +218,7 @@ CREATE TABLE `read_session` (
 
 LOCK TABLES `read_session` WRITE;
 /*!40000 ALTER TABLE `read_session` DISABLE KEYS */;
-INSERT INTO `read_session` VALUES ('978-1-55-883235-1','alessiaamato@hotmail.it',1,'ACTIVE'),('978-1-66941-569-5','lucamorelli@libero.it',2,'ACTIVE'),('978-1-287-67224-1','umbertoloria@gmail.com',3,'INACTIVE'),('978-1-875048-06-9','mariorossi@gmail.com',4,'INACTIVE'),('978-1-55-883235-1','antoniogiordano@hotmail.it',5,'ACTIVE'),('978-1-66941-569-5','antoniogiordano@hotmail.it',6,'ACTIVE'),('978-1-287-67224-1','antoniogiordano@hotmail.it',7,'ACTIVE'),('978-1-875048-06-9','antoniogiordano@hotmail.it',8,'ACTIVE'),('978-1-55-883235-1','giusepperagosta@libero.it',9,'ACTIVE'),('978-1-66941-569-5','giusepperagosta@libero.it',10,'ACTIVE'),('978-1-287-67224-1','giusepperagosta@libero.it',11,'ACTIVE'),('978-1-55-883235-1','alfonsomaddaloni@hotmail.it',12,'ACTIVE'),('978-1-66941-569-5','alfonsomaddaloni@hotmail.it',13,'ACTIVE'),('978-1-875048-06-9','alfonsomaddaloni@hotmail.it',14,'ACTIVE'),('978-1-66941-569-5','alessiaamato@hotmail.it',15,'ACTIVE'),('978-1-287-67224-1','alessiaamato@hotmail.it',16,'ACTIVE');
+INSERT INTO `read_session` VALUES ('978-1-55-883235-1','alessiaamato@hotmail.it',1,'ACTIVE'),('978-1-66941-569-5','lucamorelli@libero.it',2,'ACTIVE'),('978-1-287-67224-1','umbertoloria@gmail.com',3,'INACTIVE'),('978-1-875048-06-9','mariorossi@gmail.com',4,'INACTIVE'),('978-1-55-883235-1','antoniogiordano@hotmail.it',5,'ACTIVE'),('978-1-66941-569-5','antoniogiordano@hotmail.it',6,'ACTIVE'),('978-1-287-67224-1','antoniogiordano@hotmail.it',7,'ACTIVE'),('978-1-875048-06-9','antoniogiordano@hotmail.it',8,'ACTIVE'),('978-1-55-883235-1','giusepperagosta@libero.it',9,'ACTIVE'),('978-1-66941-569-5','giusepperagosta@libero.it',10,'ACTIVE'),('978-1-287-67224-1','giusepperagosta@libero.it',11,'ACTIVE'),('978-1-55-883235-1','alfonsomaddaloni@hotmail.it',12,'ACTIVE'),('978-1-66941-569-5','alfonsomaddaloni@hotmail.it',13,'ACTIVE'),('978-1-875048-06-9','alfonsomaddaloni@hotmail.it',14,'ACTIVE'),('978-1-66941-569-5','alessiaamato@hotmail.it',15,'ACTIVE'),('978-1-287-67224-1','alessiaamato@hotmail.it',16,'ACTIVE'),('978-1-01-406900-9','umbertoloria@gmail.com',17,'ACTIVE');
 /*!40000 ALTER TABLE `read_session` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,4 +257,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-01-21  0:45:14
+-- Dump completed on 2022-01-22 17:00:41
