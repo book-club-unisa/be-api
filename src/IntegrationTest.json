@@ -1,0 +1,891 @@
+{
+	"info": {
+		"_postman_id": "8caf14e0-32b0-4a17-9c75-f8d9293f5ada",
+		"name": "BE-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check_email\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.email).to.eqls(\"giuseppeverdi@email.com\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check_firstName\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.firstName).to.eqls(\"Giuseppe\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check_lastName\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.lastName).to.eqls(\"Verdi\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "giuseppeverdi@email.com",
+							"type": "string"
+						},
+						{
+							"key": "firstName",
+							"value": "Giuseppe",
+							"type": "string"
+						},
+						{
+							"key": "lastName",
+							"value": "Verdi",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "ciaogiuseppe",
+							"type": "string"
+						}
+					]
+				},
+				"url": "http://localhost:4000/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Log-In",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token is correct\", function () {\r",
+							"    pm.response.to.have.body(\"Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ==\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "giuseppeverdi@email.com",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "ciaogiuseppe",
+							"type": "string"
+						},
+						{
+							"key": "email",
+							"value": "prova4@email.com",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": "http://localhost:4000/users/sign-in"
+			},
+			"response": []
+		},
+		{
+			"name": "CreateBookclub",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check_bookclubName\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.bookclubName).to.eqls(\"VerdiBookclub\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check_isbn\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.book).to.eqls(\"978-1-01-406900-9\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ==\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ==",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "VerdiBookclub",
+							"type": "default"
+						},
+						{
+							"key": "isbn",
+							"value": "978-1-01-406900-9",
+							"type": "default"
+						}
+					]
+				},
+				"url": "localhost:4000/bookclubs"
+			},
+			"response": []
+		},
+		{
+			"name": "InviteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"UserInvited_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.user).to.eqls(\"alessiaamato@hotmail.it\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"BookclubNumber_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.bookclub).to.eqls(\"6\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ==\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/6/invite-user/alessiaamato@hotmail.it"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Invite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/1/delete-invite/enriquecamacho@libero.it"
+			},
+			"response": []
+		},
+		{
+			"name": "Acceptinvite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.user).to.eqls(\"alessiaamato@hotmail.it\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"State_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.State).to.eqls(\"ACCEPTED\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/invite/getInvites/accept/23"
+			},
+			"response": []
+		},
+		{
+			"name": "RefuseInvite",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.user).to.eqls(\"alessiaamato@hotmail.it\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"State_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.State).to.eqls(\"REFUSED\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/invite/getInvites/refuse/18"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Invites",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/invites/getInvites"
+			},
+			"response": []
+		},
+		{
+			"name": "See Invites",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/1/invited-users"
+			},
+			"response": []
+		},
+		{
+			"name": "FindUserByEmail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"email_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.email).to.eqls(\"giuseppeverdi@email.com\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"firsName_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.firstName).to.eqls(\"Giuseppe\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"lastName_check\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.lastName).to.eqls(\"Verdi\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4000/users/search/giuseppeverdi@email.com"
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookByTitle",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0].isbn).to.eql('978-0-00-857833-6');\r",
+							"     pm.expect(responseJson[0].title).to.eql('HAWKEYE, VOLUME 1: MY LIFE AS A WEAPON');\r",
+							"      pm.expect(responseJson[0].author).to.eql('Matt Fraction|David Aja|Javier Pulido|Matt Hollingsworth|Chris Eliopoulos|Alan Davis');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:4000/books/searchBook/ha"
+			},
+			"response": []
+		},
+		{
+			"name": "Enter Bookclub",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"var bodyJson = pm.response.json();\r",
+							"pm.test(\"is Array Test\", function() {\r",
+							"    var notArray = !Array.isArray(bodyJson.testB) \r",
+							"    pm.expect(notArray).to.eql(true);;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.id).to.eql('1');\r",
+							"    pm.expect(responseJson.founderEmail).to.eql('alessiaamato@hotmail.it');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Update ODL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ== \");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"     pm.expect(responseJson.pages).to.eql(90);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Z2l1c2VwcGV2ZXJkaUBlbWFpbC5jb21AQEB6cnJkR2NMOVkvS25VSGd6cWN3c20zbHUrSHAreElHdFBoNEZRS1dmeFV3PQ== ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "numPages",
+							"value": "90",
+							"type": "default"
+						}
+					]
+				},
+				"url": "http://localhost:4000/bookclubs/6/update-last-read-goal"
+			},
+			"response": []
+		},
+		{
+			"name": "Add PDL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ== \");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"     pm.expect(responseJson.pages).to.eql(25);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ== ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "numPages",
+							"value": "25",
+							"type": "default"
+						}
+					]
+				},
+				"url": "http://localhost:4000/bookclubs/6/addPDL"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Activities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ== \");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"     pm.expect(responseJson[0].id).to.eql(1);\r",
+							"     pm.expect(responseJson[0].session).to.eql(1);\r",
+							"     pm.expect(responseJson[0].pages).to.eql(100);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ== ",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/read-sessions/get-read-activities/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eql(\"dmluY2Vuem9wZWNvcmFyb0BnbWFpbC5jb21AQEA3TE43cnQwYVpjSk8xR3BpaUVRVkxWVXJKL21mQTdLMW1NRkRFWndPSWdVPQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.email).to.eql('vincenzopecoraro@gmail.com');\r",
+							"    pm.expect(responseJson.status).to.eql('DELETED');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "dmluY2Vuem9wZWNvcmFyb0BnbWFpbC5jb21AQEA3TE43cnQwYVpjSk8xR3BpaUVRVkxWVXJKL21mQTdLMW1NRkRFWndPSWdVPQ==",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/users/vincenzopecoraro@gmail.com"
+			},
+			"response": []
+		},
+		{
+			"name": "FindUserByToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.email).to.eql('alessiaamato@hotmail.it');\r",
+							"    pm.expect(responseJson.firstName).to.eql('Alessia');\r",
+							"    pm.expect(responseJson.lastName).to.eql('Amato');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/users/emailByToken"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Read Sessions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0].book).to.eql('978-1-55-883235-1');\r",
+							"    pm.expect(responseJson[0].user).to.eql('alessiaamato@hotmail.it');\r",
+							"    pm.expect(responseJson[0].State).to.eql('ACTIVE');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/read-sessions"
+			},
+			"response": []
+		},
+		{
+			"name": "FindBookclubsByToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {//parse the response JSON and test three properties\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0].id).to.eql(1)\r",
+							"    pm.expect(responseJson[0].name).to.eql('AmatoBookclub'); \r",
+							"    pm.expect(responseJson[0].founderEmail).to.eql('alessiaamato@hotmail.it');    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "YWxlc3NpYWFtYXRvQGhvdG1haWwuaXRAQEBmNUZjSVBDMTl6Tnd3TlVmdGwvNGJPdEZ4ZUU1cHZaK1NQVTA2bTJWaU53PQ==",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/mine"
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookclubId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Bookclub deleted\", function () {\r",
+							"    pm.response.to.have.body(\"1\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:4000/bookclubs/getIdByName/AmatoBookclub/alessiaamato@hotmail.it"
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteBookClub",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Bookclub deleted\", function () {\r",
+							"    pm.response.to.have.body(\"BOOKCLUB DELETED\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Token_check\", function(){\r",
+							"pm.expect(pm.request.headers.get(\"Authorization\")).to.eqls(\"dW1iZXJ0b2xvcmlhQGdtYWlsLmNvbUBAQGMwdWhQdVRlMmJtZW1tOTU0cUJlVGNTK2JUQkRtM2E5SWczbDRpKzBGTzA9\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "dW1iZXJ0b2xvcmlhQGdtYWlsLmNvbUBAQGMwdWhQdVRlMmJtZW1tOTU0cUJlVGNTK2JUQkRtM2E5SWczbDRpKzBGTzA9",
+						"type": "default"
+					}
+				],
+				"url": "http://localhost:4000/bookclubs/deleteBookclub/5"
+			},
+			"response": []
+		}
+	]
+}
